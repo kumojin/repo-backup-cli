@@ -20,14 +20,16 @@ type CreateLocalBackupUseCase interface {
 }
 
 type createLocalBackupUseCase struct {
-	gitHubClient            *github.Client
-	listPrivateReposUseCase ListPrivateReposUseCase
+	gitHubClient                     *github.Client
+	listPrivateReposUseCase          ListPrivateReposUseCase
+	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase
 }
 
 func NewCreateLocalBackupUseCase(client *github.Client) CreateLocalBackupUseCase {
 	return &createLocalBackupUseCase{
-		gitHubClient:            client,
-		listPrivateReposUseCase: NewListPrivateReposUseCase(client),
+		gitHubClient:                     client,
+		listPrivateReposUseCase:          NewListPrivateReposUseCase(client),
+		getOrganizationArchiveUrlUseCase: NewGetOrganizationArchiveUrlUseCase(client),
 	}
 }
 
@@ -68,7 +70,7 @@ func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string,
 				fmt.Println("Migration in progress, waiting for completion...")
 			}
 
-			url, err := uc.gitHubClient.Migrations.MigrationArchiveURL(ctx, organization, migration.GetID())
+			url, err := uc.getOrganizationArchiveUrlUseCase.Do(ctx, organization, migration.GetID())
 			if err != nil {
 				return "", fmt.Errorf("failed to get migration archive URL: %w", err)
 			}
