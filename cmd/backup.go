@@ -44,7 +44,7 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 
 	ctx := context.Background()
 
-	archivePath, err := usecase.Do(ctx, cfg.Organization, "archive.zip")
+	archivePath, err := usecase.Do(ctx, cfg.Organization, "archive.tar.gz")
 	if err != nil {
 		return err
 	}

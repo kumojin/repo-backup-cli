@@ -21,24 +21,27 @@ func NewGetOrganizationArchiveUrlUseCase(client *github.Client) GetOrganizationA
 	}
 }
 func (uc *getOrganizationArchiveUrlUseCase) Do(ctx context.Context, organization string, organizationID int64) (string, error) {
-	attempt := 1
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Second*30)
+	defer cancel()
 
-	// TODO: update this mechanism and use context timeout instead with ticker instead
+	ticker := time.NewTicker(time.Second * 5)
+	defer ticker.Stop()
+
+	var err error
+	var archiveURL string
+
+	fmt.Println("Trying to get migration archive URL...")
+
 	for {
-		archiveURL, err := uc.gitHubClient.Migrations.MigrationArchiveURL(ctx, organization, organizationID)
-		if err != nil {
-			if attempt < 3 {
-				attempt++
-				time.Sleep(time.Millisecond * 6000)
-
-				fmt.Println("attempt ", attempt)
-
-				continue
+		select {
+		case <-ticker.C:
+			archiveURL, err = uc.gitHubClient.Migrations.MigrationArchiveURL(ctx, organization, organizationID)
+			if err == nil {
+				fmt.Println("Migration archive URL retrieved successfully.")
+				return archiveURL, nil
 			}
-
-			return "", fmt.Errorf("error getting migration archive URL: %w", err)
+		case <-ctxTimeout.Done():
+			return "", fmt.Errorf("context timed out while getting migration archive URL: %w", err)
 		}
-
-		return archiveURL, nil
 	}
 }

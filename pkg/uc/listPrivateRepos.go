@@ -21,6 +21,7 @@ func NewListPrivateReposUseCase(client *github.Client) ListPrivateReposUseCase {
 }
 
 func (uc *listPrivateReposUseCase) Do(ctx context.Context, organization string) ([]github.Repository, error) {
+	// TODO: implement pagination
 	repos, _, err := uc.githubClient.Repositories.ListByOrg(
 		ctx,
 		organization,
