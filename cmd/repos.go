@@ -7,10 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	reposOrganization string
-)
-
 func ReposCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "repos",
@@ -18,15 +14,18 @@ func ReposCommand() *cobra.Command {
 		RunE:  runReposCommand,
 	}
 
-	cmd.Flags().StringVarP(&reposOrganization, "organization", "o", "Kumojin", "GitHub organization to list repositories from")
-
 	return cmd
 }
 
 func runReposCommand(cmd *cobra.Command, args []string) error {
-	client := github.NewClient(nil).WithAuthToken("your_token")
+	cfg, err := getConfig()
+	if err != nil {
+		return err
+	}
 
-	repos, _, err := client.Repositories.ListByOrg(context.TODO(), reposOrganization, &github.RepositoryListByOrgOptions{
+	client := github.NewClient(nil).WithAuthToken(cfg.GitHubToken)
+
+	repos, _, err := client.Repositories.ListByOrg(context.TODO(), cfg.Organization, &github.RepositoryListByOrgOptions{
 		Type: "private",
 	})
 
