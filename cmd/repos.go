@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"context"
-
 	appContext "github.com/kumojin/repo-backup-cli/context"
+	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
-	"github.com/google/go-github/v72/github"
 	"github.com/spf13/cobra"
 )
 
@@ -27,10 +25,9 @@ func runReposCommand(cmd *cobra.Command, args []string) error {
 
 	client := appContext.GetGitHubClient(cfg)
 
-	repos, _, err := client.Repositories.ListByOrg(context.TODO(), cfg.Organization, &github.RepositoryListByOrgOptions{
-		Type: "private",
-	})
+	usecase := uc.NewListPrivateReposUseCase(client)
 
+	repos, err := usecase.Do(cfg.Organization)
 	if err != nil {
 		return err
 	}
