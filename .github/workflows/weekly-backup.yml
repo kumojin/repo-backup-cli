@@ -1,0 +1,43 @@
+name: Weekly Repository Backup
+
+on:
+  schedule:
+    # Run every Sunday at midnight UTC
+    - cron: "0 0 * * 0"
+  workflow_dispatch: # Allows manual triggering of the workflow
+    inputs:
+      organization:
+        description: "GitHub organization to backup"
+        required: false
+        default: "kumojin"
+        type: string
+
+jobs:
+  backup:
+    name: Weekly Remote Backup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.0"
+          check-latest: false
+
+      - name: Build CLI
+        run: |
+          go build -o rbk .
+
+      - name: Run remote backup
+        run: |
+          ./rbk backup remote --organization "${{ inputs.organization || 'kumojin' }}"
+        env:
+          CLI_GITHUB_TOKEN: ${{ secrets.CLI_GITHUB_TOKEN }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_API_KEY: ${{ secrets.AZURE_STORAGE_API_KEY }}
+          AZURE_STORAGE_ACCOUNT_URL: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}
+          AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
