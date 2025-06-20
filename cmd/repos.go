@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	appContext "github.com/kumojin/repo-backup-cli/context"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
@@ -27,7 +29,9 @@ func runReposCommand(cmd *cobra.Command, args []string) error {
 
 	usecase := uc.NewListPrivateReposUseCase(client)
 
-	repos, err := usecase.Do(cfg.Organization)
+	ctx := context.Background()
+
+	repos, err := usecase.Do(ctx, cfg.Organization)
 	if err != nil {
 		return err
 	}

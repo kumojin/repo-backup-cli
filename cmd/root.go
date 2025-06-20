@@ -21,6 +21,7 @@ func RootCommand() *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&organization, "organization", "o", "Kumojin", "GitHub organization to use")
 
 	cmd.AddCommand(ReposCommand())
+	cmd.AddCommand(BackupCommand())
 
 	return cmd
 }

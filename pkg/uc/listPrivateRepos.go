@@ -1,11 +1,13 @@
 package uc
 
 import (
+	"context"
+
 	"github.com/google/go-github/v72/github"
 )
 
 type ListPrivateReposUseCase interface {
-	Do(organization string) ([]github.Repository, error)
+	Do(ctx context.Context, organization string) ([]github.Repository, error)
 }
 
 type listPrivateReposUseCase struct {
@@ -18,9 +20,9 @@ func NewListPrivateReposUseCase(client *github.Client) ListPrivateReposUseCase {
 	}
 }
 
-func (uc *listPrivateReposUseCase) Do(organization string) ([]github.Repository, error) {
+func (uc *listPrivateReposUseCase) Do(ctx context.Context, organization string) ([]github.Repository, error) {
 	repos, _, err := uc.githubClient.Repositories.ListByOrg(
-		nil,
+		ctx,
 		organization,
 		&github.RepositoryListByOrgOptions{
 			Type: "private",

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/google/go-github/v72/github"
@@ -15,7 +16,7 @@ import (
 const pollingInterval = 5 * time.Second
 
 type CreateLocalBackupUseCase interface {
-	Do(ctx context.Context, organization string, backupPath string) error
+	Do(ctx context.Context, organization string, backupPath string) (string, error)
 }
 
 type createLocalBackupUseCase struct {
@@ -30,10 +31,10 @@ func NewCreateLocalBackupUseCase(client *github.Client) CreateLocalBackupUseCase
 	}
 }
 
-func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string, backupPath string) error {
-	repos, err := uc.listPrivateReposUseCase.Do(organization)
+func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string, backupPath string) (string, error) {
+	repos, err := uc.listPrivateReposUseCase.Do(ctx, organization)
 	if err != nil {
-		return fmt.Errorf("failed to list private repositories: %w", err)
+		return "", fmt.Errorf("failed to list private repositories: %w", err)
 	}
 
 	repoNames := make([]string, len(repos))
@@ -45,7 +46,7 @@ func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string,
 		ExcludeAttachments: true,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to start migration: %w", err)
+		return "", fmt.Errorf("failed to start migration: %w", err)
 	}
 
 	ticker := time.NewTicker(pollingInterval)
@@ -56,11 +57,11 @@ func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string,
 		case <-ticker.C:
 			migration, _, err = uc.gitHubClient.Migrations.MigrationStatus(ctx, organization, migration.GetID())
 			if err != nil {
-				return fmt.Errorf("failed to get migration status: %w", err)
+				return "", fmt.Errorf("failed to get migration status: %w", err)
 			}
 
 			if migration.GetState() == "failed" {
-				return errors.New("migration failed")
+				return "", errors.New("migration failed")
 			}
 
 			if migration.GetState() != "exported" {
@@ -69,34 +70,42 @@ func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string,
 
 			url, err := uc.gitHubClient.Migrations.MigrationArchiveURL(ctx, organization, migration.GetID())
 			if err != nil {
-				return fmt.Errorf("failed to get migration archive URL: %w", err)
+				return "", fmt.Errorf("failed to get migration archive URL: %w", err)
 			}
 
 			return saveMigrationArchive(url, backupPath)
 		case <-ctx.Done():
-			return ctx.Err()
+			return "", ctx.Err()
 		}
 	}
 }
 
-func saveMigrationArchive(url string, backupPath string) error {
+func saveMigrationArchive(url string, backupPath string) (string, error) {
 	out, err := os.Create(backupPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer out.Close()
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("could not download archive, got status: %s", resp.Status)
+		return "", fmt.Errorf("could not download archive, got status: %s", resp.Status)
 	}
 
 	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-	return err
+	archivePath, err := filepath.Abs(out.Name())
+	if err != nil {
+		return "", fmt.Errorf("failed to get absolute path: %w", err)
+	}
+
+	return archivePath, nil
 }
