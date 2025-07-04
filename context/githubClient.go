@@ -9,7 +9,7 @@ var (
 	githubClient *github.Client
 )
 
-func GetGitHubClient(cfg *config.Config) *github.Client {
+func GetGithubClient(cfg *config.Config) *github.Client {
 	if githubClient == nil {
 		githubClient = github.NewClient(nil).WithAuthToken(cfg.GitHubToken)
 	}

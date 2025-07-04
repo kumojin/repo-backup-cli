@@ -25,7 +25,7 @@ func runReposCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	client := appContext.GetGitHubClient(cfg)
+	client := appContext.GetGithubClient(cfg)
 
 	usecase := uc.NewListPrivateReposUseCase(client)
 
