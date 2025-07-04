@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
+	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
 	"github.com/spf13/cobra"
@@ -71,13 +72,15 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	githubClient := appContext.GetGithubClient(cfg)
 	azClient, err := appContext.GetAzureBlobClient(cfg)
 	if err != nil {
 		return err
 	}
+	blobRepository := azure.NewBlobRepository(cfg, azClient)
 
-	usecase := uc.NewCreateRemoteBackupUseCase(cfg, azClient, githubClient)
+	githubClient := appContext.GetGithubClient(cfg)
+
+	usecase := uc.NewCreateRemoteBackupUseCase(cfg, blobRepository, githubClient)
 
 	remoteUrl, err := usecase.Do(context.Background(), cfg.Organization)
 	if err != nil {

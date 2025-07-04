@@ -6,11 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/google/go-github/v73/github"
 	"github.com/kumojin/repo-backup-cli/pkg/config"
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
-	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 )
 
 type CreateRemoteBackupUseCase interface {
@@ -23,9 +21,9 @@ type createRemoteBackupUseCase struct {
 	createBackupUseCase CreateBackupUseCase
 }
 
-func NewCreateRemoteBackupUseCase(cfg *config.Config, azureBlobClient *azblob.Client, githubClient *github.Client) CreateRemoteBackupUseCase {
+func NewCreateRemoteBackupUseCase(cfg *config.Config, blobRepository storage.BlobRepository, githubClient *github.Client) CreateRemoteBackupUseCase {
 	return &createRemoteBackupUseCase{
-		blobRepository:      azure.NewBlobRepository(cfg, azureBlobClient),
+		blobRepository:      blobRepository,
 		gitHubClient:        githubClient,
 		createBackupUseCase: NewCreateBackupUseCase(githubClient),
 	}
