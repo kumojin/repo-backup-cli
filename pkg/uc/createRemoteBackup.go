@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/go-github/v73/github"
-	"github.com/kumojin/repo-backup-cli/pkg/config"
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
 )
 
@@ -21,11 +20,15 @@ type createRemoteBackupUseCase struct {
 	createBackupUseCase CreateBackupUseCase
 }
 
-func NewCreateRemoteBackupUseCase(cfg *config.Config, blobRepository storage.BlobRepository, githubClient *github.Client) CreateRemoteBackupUseCase {
+func NewCreateRemoteBackupUseCase(
+	blobRepository storage.BlobRepository,
+	githubClient *github.Client,
+	createBackupUseCase CreateBackupUseCase,
+) CreateRemoteBackupUseCase {
 	return &createRemoteBackupUseCase{
 		blobRepository:      blobRepository,
 		gitHubClient:        githubClient,
-		createBackupUseCase: NewCreateBackupUseCase(githubClient),
+		createBackupUseCase: createBackupUseCase,
 	}
 }
 

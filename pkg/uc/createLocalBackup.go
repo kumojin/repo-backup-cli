@@ -20,10 +20,10 @@ type createLocalBackupUseCase struct {
 	createBackupUseCase CreateBackupUseCase
 }
 
-func NewCreateLocalBackupUseCase(client *github.Client) CreateLocalBackupUseCase {
+func NewCreateLocalBackupUseCase(client *github.Client, createBackupUseCase CreateBackupUseCase) CreateLocalBackupUseCase {
 	return &createLocalBackupUseCase{
 		gitHubClient:        client,
-		createBackupUseCase: NewCreateBackupUseCase(client),
+		createBackupUseCase: createBackupUseCase,
 	}
 }
 

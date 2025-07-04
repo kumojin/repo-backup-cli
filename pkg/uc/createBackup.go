@@ -23,11 +23,15 @@ type createBackupUseCase struct {
 	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase
 }
 
-func NewCreateBackupUseCase(client *github.Client) CreateBackupUseCase {
+func NewCreateBackupUseCase(
+	client *github.Client,
+	listPrivateRepoUseCase ListPrivateReposUseCase,
+	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase,
+) CreateBackupUseCase {
 	return &createBackupUseCase{
 		gitHubClient:                     client,
-		listPrivateReposUseCase:          NewListPrivateReposUseCase(client),
-		getOrganizationArchiveUrlUseCase: NewGetOrganizationArchiveUrlUseCase(client),
+		listPrivateReposUseCase:          listPrivateRepoUseCase,
+		getOrganizationArchiveUrlUseCase: getOrganizationArchiveUrlUseCase,
 	}
 }
 

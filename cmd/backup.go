@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
+	"github.com/kumojin/repo-backup-cli/pkg/config"
 	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
@@ -50,9 +51,11 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	client := appContext.GetGithubClient(cfg)
+	githubClient := appContext.GetGithubClient(cfg)
 
-	usecase := uc.NewCreateLocalBackupUseCase(client)
+	createBackupUseCase := getCreateBackupUseCase(cfg)
+
+	usecase := uc.NewCreateLocalBackupUseCase(githubClient, createBackupUseCase)
 
 	ctx := context.Background()
 
@@ -80,7 +83,9 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 
 	githubClient := appContext.GetGithubClient(cfg)
 
-	usecase := uc.NewCreateRemoteBackupUseCase(cfg, blobRepository, githubClient)
+	createBackupUseCase := getCreateBackupUseCase(cfg)
+
+	usecase := uc.NewCreateRemoteBackupUseCase(blobRepository, githubClient, createBackupUseCase)
 
 	remoteUrl, err := usecase.Do(context.Background(), cfg.Organization)
 	if err != nil {
@@ -90,4 +95,14 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 	fmt.Printf("Backup completed successfully! File saved remotely at %s\n", remoteUrl)
 
 	return nil
+}
+
+func getCreateBackupUseCase(cfg *config.Config) uc.CreateBackupUseCase {
+	githubClient := appContext.GetGithubClient(cfg)
+
+	return uc.NewCreateBackupUseCase(
+		githubClient,
+		uc.NewListPrivateReposUseCase(githubClient),
+		uc.NewGetOrganizationArchiveUrlUseCase(githubClient),
+	)
 }
