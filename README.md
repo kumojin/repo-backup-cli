@@ -85,3 +85,21 @@ rbk backup remote --organization myorg --config custom.env
 ### Debug Configuration
 
 VS Code launch configurations are provided in the `.vscode/launch.json` file for debugging for all operations above.
+
+## Automatic backup via Github action
+
+A GitHub Actions workflow is included that automatically runs a remote backup every day at midnight UTC.
+
+The workflow can also be triggered manually from the "Actions" tab in your GitHub repository.
+
+### Setup
+
+Add the following secrets to your GitHub repository:
+
+- `GITHUB_TOKEN` - A GitHub personal access token with the necessary permissions
+- `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
+- `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
+- `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
+- `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
+
+The workflow file is located at `.github/workflows/daily-backup.yml`.

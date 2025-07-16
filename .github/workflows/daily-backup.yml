@@ -1,0 +1,37 @@
+name: Daily Repository Backup
+
+on:
+  # TODO: enabled schedule when ready
+  # schedule:
+  #   # Run every day at midnight UTC
+  #   - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  backup:
+    name: Daily Remote Backup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.4"
+          check-latest: false
+
+      - name: Build CLI
+        run: |
+          go build -o rbk .
+
+      - name: Run remote backup
+        run: |
+          ./rbk backup remote
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          azure_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          azure_storage_api_key: ${{ secrets.AZURE_STORAGE_API_KEY }}
+          azure_storage_account_url: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}
+          azure_storage_container_name: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
