@@ -42,9 +42,7 @@ func (uc *createRemoteBackupUseCase) Do(ctx context.Context, organization string
 
 		blobName := fmt.Sprintf("%s-org-migration.tar.gz", time.Now().Format(time.DateOnly))
 
-		blobUrl, err := uc.blobRepository.Upload(ctx, blobName, resp.Body)
-
-		return blobUrl, nil
+		return uc.blobRepository.Upload(ctx, blobName, resp.Body)
 	}
 
 	return uc.createBackupUseCase.Do(ctx, organization, saveMigrationArchive)
