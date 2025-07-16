@@ -12,9 +12,26 @@ Repo Backup CLI (rbk) provides functionality to:
 
 The backup feature of this CLI leverages GitHub's Migration API to create a migration archive of all private non-archived repositories from a specified organization and then downloads or uploads this archive to your desired storage location.
 
-## Configuration
+## Development Setup
 
-Create a `.env` file in the root directory from the `.env.template` file and replace the variables with the correct values.
+### Install Dependencies
+
+This project requires several development dependencies which can be installed using Homebrew:
+
+```bash
+# Install all dependencies using the included Brewfile
+brew bundle
+```
+
+### Configuration
+
+You can use the included `justfile` to set up the environment:
+
+```bash
+just setup
+```
+
+The above command will create a `.env` file in the root directory from the `.env.template` file. You should replace the variables in it with the correct values.
 
 ## Usage
 
@@ -85,6 +102,14 @@ rbk backup remote --organization myorg --config custom.env
 ### Debug Configuration
 
 VS Code launch configurations are provided in the `.vscode/launch.json` file for debugging for all operations above.
+
+### Using the Justfile
+
+This project includes a `justfile` with common development tasks. Use the following command to list them all:
+
+```bash
+just
+```
 
 ## Automatic backup via Github action
 
