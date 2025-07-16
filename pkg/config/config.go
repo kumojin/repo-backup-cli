@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	azureStorageAccountNameKey   = "azure_storage_account_name"
-	azureStorageApiKeyKey        = "azure_storage_api_key"
-	azureStorageAccountUrlKey    = "azure_storage_account_url"
-	azureStorageContainerNameKey = "azure_storage_container_name"
-	githubTokenKey               = "github_token"
+	azureStorageAccountNameKey   = "AZURE_STORAGE_ACCOUNT_NAME"
+	azureStorageApiKeyKey        = "AZURE_STORAGE_API_KEY"
+	azureStorageAccountUrlKey    = "AZURE_STORAGE_ACCOUNT_URL"
+	azureStorageContainerNameKey = "AZURE_STORAGE_CONTAINER_NAME"
+	githubTokenKey               = "GITHUB_TOKEN"
 )
 
 type AzureStorageConfig struct {
@@ -48,6 +48,8 @@ type Config struct {
 func New(filepath string) (*Config, error) {
 	viper.SetConfigName(filepath)
 	viper.SetConfigType("env")
+
+	viper.AutomaticEnv()
 
 	viper.AddConfigPath(".")
 

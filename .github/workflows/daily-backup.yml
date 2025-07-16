@@ -30,8 +30,8 @@ jobs:
         run: |
           ./rbk backup remote
         env:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          azure_storage_account_name: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
-          azure_storage_api_key: ${{ secrets.AZURE_STORAGE_API_KEY }}
-          azure_storage_account_url: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}
-          azure_storage_container_name: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
+          AZURE_STORAGE_API_KEY: ${{ secrets.AZURE_STORAGE_API_KEY }}
+          AZURE_STORAGE_ACCOUNT_URL: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}
+          AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
