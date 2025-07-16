@@ -5,35 +5,35 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/google/go-github/v73/github"
-	"github.com/kumojin/repo-backup-cli/pkg/github/mocks"
+	gh "github.com/google/go-github/v73/github"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) {
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Setup mock expectations
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
 		Return(
-			[]*github.Repository{
+			[]*gh.Repository{
 				{
-					Name:     github.Ptr("repo1"),
-					Archived: github.Ptr(false),
-					Private:  github.Ptr(true),
+					Name:     gh.Ptr("repo1"),
+					Archived: gh.Ptr(false),
+					Private:  gh.Ptr(true),
 				},
 				{
-					Name:     github.Ptr("repo2"),
-					Archived: github.Ptr(true), // Archived repo, should be filtered out
-					Private:  github.Ptr(true),
+					Name:     gh.Ptr("repo2"),
+					Archived: gh.Ptr(true), // Archived repo, should be filtered out
+					Private:  gh.Ptr(true),
 				},
 				{
-					Name:     github.Ptr("repo3"),
-					Archived: github.Ptr(false),
-					Private:  github.Ptr(true),
+					Name:     gh.Ptr("repo3"),
+					Archived: gh.Ptr(false),
+					Private:  gh.Ptr(true),
 				},
 			},
 			nil,
@@ -48,16 +48,16 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 	// Assertions
 	assert.NoError(t, err)
 
-	expectedRepos := []github.Repository{
+	expectedRepos := []gh.Repository{
 		{
-			Name:     github.Ptr("repo1"),
-			Archived: github.Ptr(false),
-			Private:  github.Ptr(true),
+			Name:     gh.Ptr("repo1"),
+			Archived: gh.Ptr(false),
+			Private:  gh.Ptr(true),
 		},
 		{
-			Name:     github.Ptr("repo3"),
-			Archived: github.Ptr(false),
-			Private:  github.Ptr(true),
+			Name:     gh.Ptr("repo3"),
+			Archived: gh.Ptr(false),
+			Private:  gh.Ptr(true),
 		},
 	}
 	assert.Equal(t, expectedRepos, repos)
@@ -65,7 +65,7 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 
 func TestListPrivateReposUseCase_ErrorFromGitHubClient(t *testing.T) {
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Setup mock expectations
 	mockClient.EXPECT().
@@ -86,12 +86,12 @@ func TestListPrivateReposUseCase_ErrorFromGitHubClient(t *testing.T) {
 
 func TestListPrivateReposUseCase_NoRepositoriesFound(t *testing.T) {
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Setup mock expectations
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
-		Return([]*github.Repository{}, nil)
+		Return([]*gh.Repository{}, nil)
 
 	// Create use case with mock client
 	useCase := NewListPrivateReposUseCase(mockClient)

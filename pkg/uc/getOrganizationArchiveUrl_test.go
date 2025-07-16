@@ -6,14 +6,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kumojin/repo-backup-cli/pkg/github/mocks"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func TestGetOrganizationArchiveUrlUseCase_SuccessfullyGetURL(t *testing.T) {
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Setup mock expectations
 	mockClient.EXPECT().
@@ -33,7 +33,7 @@ func TestGetOrganizationArchiveUrlUseCase_SuccessfullyGetURL(t *testing.T) {
 
 func TestGetOrganizationArchiveUrlUseCase_ErrorFirstAttemptThenSuccess(t *testing.T) {
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Set up a counter to track call attempts
 	callCount := 0
@@ -72,7 +72,7 @@ func TestGetOrganizationArchiveUrlUseCase_ContextTimeout(t *testing.T) {
 	ctx := context.Background()
 
 	// Create mock client
-	mockClient := mocks.NewMockClient(t)
+	mockClient := github.NewMockClient(t)
 
 	// Setup mock expectations - always return error to force timeout
 	mockClient.EXPECT().

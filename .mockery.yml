@@ -1,12 +1,12 @@
 all: false
 dir: "{{.InterfaceDir}}"
-filename: mocks/mock_{{.InterfaceName | camelcase}}.go
+filename: "{{.SrcPackageName}}_mock.go"
 force-file-write: true
 formatter: goimports
 include-auto-generated: false
 log-level: info
 structname: "{{.Mock}}{{.InterfaceName}}"
-pkgname: mocks
+pkgname: "{{.SrcPackageName}}"
 recursive: false
 require-template-schema-exists: true
 template: testify
@@ -16,5 +16,8 @@ packages:
     config:
       all: true
   github.com/kumojin/repo-backup-cli/pkg/github:
+    config:
+      all: true
+  github.com/kumojin/repo-backup-cli/pkg/uc:
     config:
       all: true
