@@ -9,18 +9,20 @@ import (
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 
-const pollingInterval = 5 * time.Second
+const defaultPollingInterval = 5 * time.Second
 
 type SaveBackupFunc func(url string) (string, error)
 
 type CreateBackupUseCase interface {
 	Do(ctx context.Context, organization string, saveBackupFunc SaveBackupFunc) (string, error)
+	WithPollingInterval(interval time.Duration) CreateBackupUseCase
 }
 
 type createBackupUseCase struct {
 	githubClient                     github.Client
 	listPrivateReposUseCase          ListPrivateReposUseCase
 	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase
+	pollingInterval                  time.Duration
 }
 
 func NewCreateBackupUseCase(
@@ -32,7 +34,13 @@ func NewCreateBackupUseCase(
 		githubClient:                     client,
 		listPrivateReposUseCase:          listPrivateRepoUseCase,
 		getOrganizationArchiveUrlUseCase: getOrganizationArchiveUrlUseCase,
+		pollingInterval:                  defaultPollingInterval,
 	}
+}
+
+func (uc *createBackupUseCase) WithPollingInterval(interval time.Duration) CreateBackupUseCase {
+	uc.pollingInterval = interval
+	return uc
 }
 
 func (uc *createBackupUseCase) Do(ctx context.Context, organization string, saveBackupFunc SaveBackupFunc) (string, error) {
@@ -51,7 +59,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 		return "", fmt.Errorf("failed to start migration: %w", err)
 	}
 
-	ticker := time.NewTicker(pollingInterval)
+	ticker := time.NewTicker(uc.pollingInterval)
 	defer ticker.Stop()
 
 	for {
@@ -68,6 +76,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 
 			if migration.GetState() != "exported" {
 				fmt.Println("Migration in progress, waiting for completion...")
+				break
 			}
 
 			url, err := uc.getOrganizationArchiveUrlUseCase.Do(ctx, organization, migration.GetID())
