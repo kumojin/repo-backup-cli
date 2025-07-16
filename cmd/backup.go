@@ -6,6 +6,7 @@ import (
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
 	"github.com/kumojin/repo-backup-cli/pkg/config"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
@@ -51,11 +52,9 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	githubClient := appContext.GetGithubClient(cfg)
-
 	createBackupUseCase := getCreateBackupUseCase(cfg)
 
-	usecase := uc.NewCreateLocalBackupUseCase(githubClient, createBackupUseCase)
+	usecase := uc.NewCreateLocalBackupUseCase(createBackupUseCase)
 
 	ctx := context.Background()
 
@@ -81,11 +80,9 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 	}
 	blobRepository := azure.NewBlobRepository(cfg, azClient)
 
-	githubClient := appContext.GetGithubClient(cfg)
-
 	createBackupUseCase := getCreateBackupUseCase(cfg)
 
-	usecase := uc.NewCreateRemoteBackupUseCase(blobRepository, githubClient, createBackupUseCase)
+	usecase := uc.NewCreateRemoteBackupUseCase(blobRepository, createBackupUseCase)
 
 	remoteUrl, err := usecase.Do(context.Background(), cfg.Organization)
 	if err != nil {
@@ -98,7 +95,7 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 }
 
 func getCreateBackupUseCase(cfg *config.Config) uc.CreateBackupUseCase {
-	githubClient := appContext.GetGithubClient(cfg)
+	githubClient := github.NewClient(appContext.GetGithubClient(cfg))
 
 	return uc.NewCreateBackupUseCase(
 		githubClient,

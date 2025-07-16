@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/go-github/v73/github"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 
 const pollingInterval = 5 * time.Second
@@ -18,18 +18,18 @@ type CreateBackupUseCase interface {
 }
 
 type createBackupUseCase struct {
-	gitHubClient                     *github.Client
+	githubClient                     github.Client
 	listPrivateReposUseCase          ListPrivateReposUseCase
 	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase
 }
 
 func NewCreateBackupUseCase(
-	client *github.Client,
+	client github.Client,
 	listPrivateRepoUseCase ListPrivateReposUseCase,
 	getOrganizationArchiveUrlUseCase GetOrganizationArchiveUrlUseCase,
 ) CreateBackupUseCase {
 	return &createBackupUseCase{
-		gitHubClient:                     client,
+		githubClient:                     client,
 		listPrivateReposUseCase:          listPrivateRepoUseCase,
 		getOrganizationArchiveUrlUseCase: getOrganizationArchiveUrlUseCase,
 	}
@@ -46,9 +46,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 		repoNames[i] = *repo.Name
 	}
 
-	migration, _, err := uc.gitHubClient.Migrations.StartMigration(ctx, organization, repoNames, &github.MigrationOptions{
-		ExcludeAttachments: true,
-	})
+	migration, err := uc.githubClient.StartMigration(ctx, organization, repoNames)
 	if err != nil {
 		return "", fmt.Errorf("failed to start migration: %w", err)
 	}
@@ -59,7 +57,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 	for {
 		select {
 		case <-ticker.C:
-			migration, _, err = uc.gitHubClient.Migrations.MigrationStatus(ctx, organization, migration.GetID())
+			migration, err = uc.githubClient.GetMigrationStatus(ctx, organization, migration.GetID())
 			if err != nil {
 				return "", fmt.Errorf("failed to get migration status: %w", err)
 			}

@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/google/go-github/v73/github"
 )
 
 type CreateLocalBackupUseCase interface {
@@ -16,13 +14,11 @@ type CreateLocalBackupUseCase interface {
 }
 
 type createLocalBackupUseCase struct {
-	gitHubClient        *github.Client
 	createBackupUseCase CreateBackupUseCase
 }
 
-func NewCreateLocalBackupUseCase(client *github.Client, createBackupUseCase CreateBackupUseCase) CreateLocalBackupUseCase {
+func NewCreateLocalBackupUseCase(createBackupUseCase CreateBackupUseCase) CreateLocalBackupUseCase {
 	return &createLocalBackupUseCase{
-		gitHubClient:        client,
 		createBackupUseCase: createBackupUseCase,
 	}
 }

@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/go-github/v73/github"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 
 type GetOrganizationArchiveUrlUseCase interface {
 	Do(ctx context.Context, organization string, organizationID int64) (string, error)
 }
 type getOrganizationArchiveUrlUseCase struct {
-	gitHubClient *github.Client
+	gitHubClient github.Client
 }
 
-func NewGetOrganizationArchiveUrlUseCase(client *github.Client) GetOrganizationArchiveUrlUseCase {
+func NewGetOrganizationArchiveUrlUseCase(client github.Client) GetOrganizationArchiveUrlUseCase {
 	return &getOrganizationArchiveUrlUseCase{
 		gitHubClient: client,
 	}
@@ -35,7 +35,7 @@ func (uc *getOrganizationArchiveUrlUseCase) Do(ctx context.Context, organization
 	for {
 		select {
 		case <-ticker.C:
-			archiveURL, err = uc.gitHubClient.Migrations.MigrationArchiveURL(ctx, organization, organizationID)
+			archiveURL, err = uc.gitHubClient.GetMigrationArchiveURL(ctx, organization, organizationID)
 			if err == nil {
 				fmt.Println("Migration archive URL retrieved successfully.")
 				return archiveURL, nil

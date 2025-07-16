@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/go-github/v73/github"
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
 )
 
@@ -16,18 +15,15 @@ type CreateRemoteBackupUseCase interface {
 
 type createRemoteBackupUseCase struct {
 	blobRepository      storage.BlobRepository
-	gitHubClient        *github.Client
 	createBackupUseCase CreateBackupUseCase
 }
 
 func NewCreateRemoteBackupUseCase(
 	blobRepository storage.BlobRepository,
-	githubClient *github.Client,
 	createBackupUseCase CreateBackupUseCase,
 ) CreateRemoteBackupUseCase {
 	return &createRemoteBackupUseCase{
 		blobRepository:      blobRepository,
-		gitHubClient:        githubClient,
 		createBackupUseCase: createBackupUseCase,
 	}
 }

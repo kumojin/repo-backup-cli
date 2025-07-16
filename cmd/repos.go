@@ -4,6 +4,7 @@ import (
 	"context"
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
+	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
 	"github.com/spf13/cobra"
@@ -25,9 +26,9 @@ func runReposCommand(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	client := appContext.GetGithubClient(cfg)
+	githubClient := github.NewClient(appContext.GetGithubClient(cfg))
 
-	usecase := uc.NewListPrivateReposUseCase(client)
+	usecase := uc.NewListPrivateReposUseCase(githubClient)
 
 	ctx := context.Background()
 
