@@ -6,6 +6,7 @@ import (
 	"io"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,8 @@ type createRemoteBackupTestMocks struct {
 func newCreateRemoteBackupTestMocks(t *testing.T) *createRemoteBackupTestMocks {
 	mockBlobRepository := storage.NewMockBlobRepository(t)
 	mockCreateBackupUseCase := NewMockCreateBackupUseCase(t)
+
+	getCurrentTime = func() time.Time { return time.Date(2025, 7, 23, 0, 0, 0, 0, time.UTC) }
 
 	return &createRemoteBackupTestMocks{
 		blobRepository:      mockBlobRepository,
@@ -161,5 +164,5 @@ func TestCreateRemoteBackupUseCase_BlobNameFormat(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBlobURL, result)
 	assert.Contains(t, capturedBlobName, "-kumojin-migration.tar.gz")
-	assert.Contains(t, capturedBlobName, "2025-07-23") // Current date based on context
+	assert.Contains(t, capturedBlobName, "2025-07-23")
 }

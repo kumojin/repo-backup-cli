@@ -9,6 +9,8 @@ import (
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
 )
 
+var getCurrentTime = time.Now
+
 type CreateRemoteBackupUseCase interface {
 	Do(ctx context.Context, organization string) (string, error)
 }
@@ -30,7 +32,7 @@ func NewCreateRemoteBackupUseCase(
 
 func (uc *createRemoteBackupUseCase) Do(ctx context.Context, organization string) (string, error) {
 	saveMigrationArchive := func(reader io.Reader) (string, error) {
-		blobName := fmt.Sprintf("%s-%s-migration.tar.gz", time.Now().Format(time.DateOnly), organization)
+		blobName := fmt.Sprintf("%s-%s-migration.tar.gz", getCurrentTime().Format(time.DateOnly), organization)
 		return uc.blobRepository.Upload(ctx, blobName, reader)
 	}
 
