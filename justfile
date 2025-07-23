@@ -18,23 +18,19 @@ setup-env:
 # Generate mocks using mockery
 generate-mocks:
     #!/bin/bash
-    @echo "Checking if mockery is installed..."
     if ! command -v mockery &> /dev/null; then
         echo "Error: mockery is not installed. Please install it using homebrew."
         exit 1
     fi
     
-    @echo "Generating mocks..."
     mockery
 
 # Clean generated mocks
 clean-mocks:
-    @echo "Cleaning mocks..."
     find . -path "*/mocks/mock_*.go" -delete
 
 # Build the CLI
 build:
-    @echo "Building repo-backup-cli..."
     go build -o rbk .
 
 # Run local backup
@@ -53,7 +49,16 @@ list-repos: build
 test:
     go test -v ./...
 
+# Run tests with coverage and open the report in browser
+test-coverage:
+    @mkdir -p coverage
+    @go test -v ./... -coverprofile=coverage/coverage.out > /dev/null
+    @grep -v "_mock.go" coverage/coverage.out > coverage/coverage_filtered.out || true
+    @go tool cover -func coverage/coverage_filtered.out
+    @go tool cover -html=coverage/coverage_filtered.out
+
 # Setup the project (install dependencies and create .env)
 setup:
     go mod download
     @just setup-env
+

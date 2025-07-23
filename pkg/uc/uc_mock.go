@@ -111,6 +111,59 @@ func (_c *MockCreateBackupUseCase_Do_Call) RunAndReturn(run func(ctx context.Con
 	return _c
 }
 
+// WithPollingInterval provides a mock function for the type MockCreateBackupUseCase
+func (_mock *MockCreateBackupUseCase) WithPollingInterval(interval time.Duration) CreateBackupUseCase {
+	ret := _mock.Called(interval)
+
+	if len(ret) == 0 {
+		panic("no return value specified for WithPollingInterval")
+	}
+
+	var r0 CreateBackupUseCase
+	if returnFunc, ok := ret.Get(0).(func(time.Duration) CreateBackupUseCase); ok {
+		r0 = returnFunc(interval)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(CreateBackupUseCase)
+		}
+	}
+	return r0
+}
+
+// MockCreateBackupUseCase_WithPollingInterval_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WithPollingInterval'
+type MockCreateBackupUseCase_WithPollingInterval_Call struct {
+	*mock.Call
+}
+
+// WithPollingInterval is a helper method to define mock.On call
+//   - interval time.Duration
+func (_e *MockCreateBackupUseCase_Expecter) WithPollingInterval(interval interface{}) *MockCreateBackupUseCase_WithPollingInterval_Call {
+	return &MockCreateBackupUseCase_WithPollingInterval_Call{Call: _e.mock.On("WithPollingInterval", interval)}
+}
+
+func (_c *MockCreateBackupUseCase_WithPollingInterval_Call) Run(run func(interval time.Duration)) *MockCreateBackupUseCase_WithPollingInterval_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 time.Duration
+		if args[0] != nil {
+			arg0 = args[0].(time.Duration)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockCreateBackupUseCase_WithPollingInterval_Call) Return(createBackupUseCase CreateBackupUseCase) *MockCreateBackupUseCase_WithPollingInterval_Call {
+	_c.Call.Return(createBackupUseCase)
+	return _c
+}
+
+func (_c *MockCreateBackupUseCase_WithPollingInterval_Call) RunAndReturn(run func(interval time.Duration) CreateBackupUseCase) *MockCreateBackupUseCase_WithPollingInterval_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockCreateLocalBackupUseCase creates a new instance of MockCreateLocalBackupUseCase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockCreateLocalBackupUseCase(t interface {
