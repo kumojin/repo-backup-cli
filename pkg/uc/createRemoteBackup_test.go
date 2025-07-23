@@ -92,8 +92,7 @@ func TestCreateRemoteBackupUseCase_CreateBackupError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to create backup")
+	assert.ErrorIs(t, err, expectedError)
 	assert.Empty(t, result)
 }
 

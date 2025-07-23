@@ -85,8 +85,7 @@ func TestCreateLocalBackupUseCase_CreateBackupError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, backupPath)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to create backup")
+	assert.ErrorIs(t, err, expectedError)
 	assert.Empty(t, result)
 }
 
@@ -133,15 +132,14 @@ func TestCreateLocalBackupUseCase_IOCopyError(t *testing.T) {
 	backupPath := filepath.Join(tempDir, "backup.tar.gz")
 
 	// Create a reader that will cause an error during copy
-	errorReader := &errorReader{err: errors.New("read error")}
 	readError := errors.New("read error")
+	errorReader := &errorReader{err: readError}
 
 	mocks.createBackupUseCase.EXPECT().
 		Do(mock.Anything, organization, mock.AnythingOfType("uc.SaveBackupFunc")).
 		Run(func(ctx context.Context, org string, saveFunc SaveBackupFunc) {
 			result, err := saveFunc(errorReader)
-			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "read error")
+			assert.ErrorIs(t, err, readError)
 			assert.Empty(t, result)
 		}).
 		Return("", readError)
@@ -152,8 +150,7 @@ func TestCreateLocalBackupUseCase_IOCopyError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, backupPath)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "read error")
+	assert.ErrorIs(t, err, readError)
 	assert.Empty(t, result)
 }
 

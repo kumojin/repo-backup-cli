@@ -11,6 +11,8 @@ import (
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 
+var ErrMigrationFailed = errors.New("migration failed")
+
 const defaultPollingInterval = 5 * time.Second
 
 type SaveBackupFunc func(reader io.Reader) (string, error)
@@ -73,7 +75,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 			}
 
 			if migration.GetState() == "failed" {
-				return "", errors.New("migration failed")
+				return "", ErrMigrationFailed
 			}
 
 			if migration.GetState() != "exported" {

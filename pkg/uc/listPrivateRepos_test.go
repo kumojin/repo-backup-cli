@@ -65,9 +65,10 @@ func TestListPrivateReposUseCase_ErrorFromGitHubClient(t *testing.T) {
 	// Given
 	mockClient := github.NewMockClient(t)
 
+	githubApiError := errors.New("github API error")
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
-		Return(nil, errors.New("github API error"))
+		Return(nil, githubApiError)
 
 	useCase := NewListPrivateReposUseCase(mockClient)
 
@@ -75,8 +76,7 @@ func TestListPrivateReposUseCase_ErrorFromGitHubClient(t *testing.T) {
 	repos, err := useCase.Do(context.Background(), "kumojin")
 
 	// Then
-	assert.Error(t, err)
-	assert.Equal(t, "github API error", err.Error())
+	assert.ErrorIs(t, err, githubApiError)
 	assert.Nil(t, repos)
 }
 

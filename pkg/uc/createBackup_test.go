@@ -184,8 +184,7 @@ func TestCreateBackupUseCase_ListRepositoriesError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to list private repositories")
+	assert.ErrorIs(t, err, expectedError)
 	assert.Empty(t, result)
 }
 
@@ -213,8 +212,7 @@ func TestCreateBackupUseCase_StartMigrationError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to start migration")
+	assert.ErrorIs(t, err, expectedError)
 	assert.Empty(t, result)
 }
 
@@ -253,8 +251,7 @@ func TestCreateBackupUseCase_FailedMigration(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "migration failed")
+	assert.ErrorIs(t, err, ErrMigrationFailed)
 	assert.Empty(t, result)
 }
 
@@ -290,8 +287,7 @@ func TestCreateBackupUseCase_GetMigrationStatusError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to get migration status")
+	assert.ErrorIs(t, err, expectedError)
 	assert.Empty(t, result)
 }
 
