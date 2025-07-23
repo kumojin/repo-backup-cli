@@ -6,6 +6,12 @@ on:
   #   # Run every day at midnight UTC
   #   - cron: '0 0 * * *'
   workflow_dispatch: # Allows manual triggering of the workflow
+    inputs:
+      organization:
+        description: "GitHub organization to backup"
+        required: false
+        default: "kumojin"
+        type: string
 
 jobs:
   backup:
@@ -28,7 +34,7 @@ jobs:
 
       - name: Run remote backup
         run: |
-          ./rbk backup remote
+          ./rbk backup remote --organization "${{ inputs.organization || 'kumojin' }}"
         env:
           CLI_GITHUB_TOKEN: ${{ secrets.CLI_GITHUB_TOKEN }}
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
