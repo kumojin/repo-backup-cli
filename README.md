@@ -123,7 +123,7 @@ The workflow file is located at `.github/workflows/daily-backup.yml`.
 
 Add the following secrets to your GitHub repository:
 
-- `GITHUB_TOKEN` - A GitHub personal access token with the necessary permissions
+- `CLI_GITHUB_TOKEN` - A GitHub personal access token with the necessary permissions
 - `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
 - `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
 - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL

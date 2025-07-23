@@ -30,7 +30,7 @@ jobs:
         run: |
           ./rbk backup remote
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLI_GITHUB_TOKEN: ${{ secrets.CLI_GITHUB_TOKEN }}
           AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
           AZURE_STORAGE_API_KEY: ${{ secrets.AZURE_STORAGE_API_KEY }}
           AZURE_STORAGE_ACCOUNT_URL: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}

@@ -11,7 +11,7 @@ const (
 	azureStorageApiKeyKey        = "AZURE_STORAGE_API_KEY"
 	azureStorageAccountUrlKey    = "AZURE_STORAGE_ACCOUNT_URL"
 	azureStorageContainerNameKey = "AZURE_STORAGE_CONTAINER_NAME"
-	githubTokenKey               = "GITHUB_TOKEN"
+	githubTokenKey               = "CLI_GITHUB_TOKEN"
 )
 
 type AzureStorageConfig struct {
