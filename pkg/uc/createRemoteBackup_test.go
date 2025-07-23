@@ -109,8 +109,7 @@ func TestCreateRemoteBackupUseCase_BlobUploadError(t *testing.T) {
 		Run(func(ctx context.Context, org string, saveFunc SaveBackupFunc) {
 			reader := strings.NewReader(archiveContent)
 			_, err := saveFunc(reader)
-			assert.Error(t, err)
-			assert.Contains(t, err.Error(), "failed to upload blob")
+			assert.ErrorIs(t, err, uploadError)
 		}).
 		Return("", uploadError)
 
@@ -126,8 +125,7 @@ func TestCreateRemoteBackupUseCase_BlobUploadError(t *testing.T) {
 	result, err := useCase.Do(context.Background(), organization)
 
 	// Then
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to upload blob")
+	assert.ErrorIs(t, err, uploadError)
 	assert.Empty(t, result)
 }
 
@@ -163,6 +161,5 @@ func TestCreateRemoteBackupUseCase_BlobNameFormat(t *testing.T) {
 	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBlobURL, result)
-	assert.Contains(t, capturedBlobName, "-kumojin-migration.tar.gz")
-	assert.Contains(t, capturedBlobName, "2025-07-23")
+	assert.Equal(t, capturedBlobName, "2025-07-23-kumojin-migration.tar.gz")
 }
