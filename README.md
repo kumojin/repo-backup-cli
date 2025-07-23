@@ -117,6 +117,8 @@ A GitHub Actions workflow is included that automatically runs a remote backup ev
 
 The workflow can also be triggered manually from the "Actions" tab in your GitHub repository.
 
+The workflow file is located at `.github/workflows/daily-backup.yml`.
+
 ### Setup
 
 Add the following secrets to your GitHub repository:
@@ -127,4 +129,11 @@ Add the following secrets to your GitHub repository:
 - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
 - `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
 
-The workflow file is located at `.github/workflows/daily-backup.yml`.
+#### GitHub Token Requirements
+
+The GitHub token must be a **classic personal access token** (not a fine-grained token) with the following permissions:
+
+- `repo` - Full control of private repositories
+- `admin:org` - Full control of orgs and teams, read and write org projects
+
+To create a classic token follow these [instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
