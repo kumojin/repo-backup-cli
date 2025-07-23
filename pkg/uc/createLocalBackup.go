@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -24,24 +23,14 @@ func NewCreateLocalBackupUseCase(createBackupUseCase CreateBackupUseCase) Create
 }
 
 func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string, backupPath string) (string, error) {
-	saveMigrationArchive := func(url string) (string, error) {
+	saveMigrationArchive := func(reader io.Reader) (string, error) {
 		out, err := os.Create(backupPath)
 		if err != nil {
 			return "", err
 		}
 		defer out.Close()
 
-		resp, err := http.Get(url)
-		if err != nil {
-			return "", err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return "", fmt.Errorf("could not download archive, got status: %s", resp.Status)
-		}
-
-		_, err = io.Copy(out, resp.Body)
+		_, err = io.Copy(out, reader)
 		if err != nil {
 			return "", err
 		}

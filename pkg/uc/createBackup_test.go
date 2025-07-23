@@ -3,6 +3,9 @@ package uc
 import (
 	"context"
 	"errors"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	gh "github.com/google/go-github/v73/github"
@@ -16,8 +19,13 @@ type MockSaveBackupFunc struct {
 	mock.Mock
 }
 
-func (m *MockSaveBackupFunc) Do(url string) (string, error) {
-	args := m.Called(url)
+func (m *MockSaveBackupFunc) Do(reader io.Reader) (string, error) {
+	// Read the content to pass it to the mock for assertions
+	content, err := io.ReadAll(reader)
+	if err != nil {
+		return "", err
+	}
+	args := m.Called(string(content))
 	return args.String(0), args.Error(1)
 }
 
@@ -26,7 +34,7 @@ type createBackupTestMocks struct {
 	githubClient              *github.MockClient
 	listPrivateRepos          *MockListPrivateReposUseCase
 	getOrganizationArchiveUrl *MockGetOrganizationArchiveUrlUseCase
-	saveBackupFunc            func(url string) (string, error)
+	saveBackupFunc            func(reader io.Reader) (string, error)
 	saveBackupMock            *MockSaveBackupFunc
 }
 
@@ -36,10 +44,9 @@ func newCreateBackupTestMocks(t *testing.T) *createBackupTestMocks {
 	mockListPrivateRepos := NewMockListPrivateReposUseCase(t)
 	mockGetArchiveUrl := NewMockGetOrganizationArchiveUrlUseCase(t)
 
-	// Create mock save backup function
 	mockSaveBackup := new(MockSaveBackupFunc)
-	saveBackupFunc := func(url string) (string, error) {
-		return mockSaveBackup.Do(url)
+	saveBackupFunc := func(reader io.Reader) (string, error) {
+		return mockSaveBackup.Do(reader)
 	}
 
 	return &createBackupTestMocks{
@@ -60,7 +67,6 @@ func (m *createBackupTestMocks) createUseCase() CreateBackupUseCase {
 func TestCreateBackupUseCase_Success(t *testing.T) {
 	// Given
 	mocks := newCreateBackupTestMocks(t)
-
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -71,8 +77,14 @@ func TestCreateBackupUseCase_Success(t *testing.T) {
 		ID:    gh.Ptr(int64(12345)),
 		State: gh.Ptr("exported"),
 	}
-	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
+	archiveContent := "mock archive content"
 	savePath := "/tmp/backup.zip"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(archiveContent))
+	}))
+	defer server.Close()
 
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
@@ -84,9 +96,9 @@ func TestCreateBackupUseCase_Success(t *testing.T) {
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(migration, nil)
 
-	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
+	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(server.URL, nil)
 
-	mocks.saveBackupMock.On("Do", archiveURL).Return(savePath, nil)
+	mocks.saveBackupMock.On("Do", archiveContent).Return(savePath, nil)
 
 	useCase := mocks.createUseCase()
 
@@ -117,8 +129,14 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 		ID:    gh.Ptr(int64(12345)),
 		State: gh.Ptr("exported"),
 	}
-	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
+	archiveContent := "mock archive content"
 	savePath := "/tmp/backup.zip"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(archiveContent))
+	}))
+	defer server.Close()
 
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
@@ -136,9 +154,9 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 		Return(migration, nil).
 		Once()
 
-	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
+	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(server.URL, nil)
 
-	mocks.saveBackupMock.On("Do", archiveURL).Return(savePath, nil)
+	mocks.saveBackupMock.On("Do", archiveContent).Return(savePath, nil)
 
 	useCase := mocks.createUseCase()
 
@@ -331,8 +349,14 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 		ID:    gh.Ptr(int64(12345)),
 		State: gh.Ptr("exported"),
 	}
-	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
+	archiveContent := "mock archive content"
 	expectedError := errors.New("failed to save backup")
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(archiveContent))
+	}))
+	defer server.Close()
 
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
@@ -344,9 +368,9 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(migration, nil)
 
-	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
+	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(server.URL, nil)
 
-	mocks.saveBackupMock.On("Do", archiveURL).Return("", expectedError)
+	mocks.saveBackupMock.On("Do", archiveContent).Return("", expectedError)
 
 	useCase := mocks.createUseCase()
 
@@ -357,6 +381,90 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Empty(t, result)
 	mocks.saveBackupMock.AssertExpectations(t)
+}
+
+func TestCreateBackupUseCase_HTTPStatusNotOK(t *testing.T) {
+	// Given
+	mocks := newCreateBackupTestMocks(t)
+
+	organization := "kumojin"
+	repos := []gh.Repository{
+		{Name: gh.Ptr("repo1")},
+		{Name: gh.Ptr("repo2")},
+	}
+	repoNames := []string{"repo1", "repo2"}
+	migration := &gh.Migration{
+		ID:    gh.Ptr(int64(12345)),
+		State: gh.Ptr("exported"),
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Internal Server Error"))
+	}))
+	defer server.Close()
+
+	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
+
+	mocks.githubClient.EXPECT().
+		StartMigration(mock.Anything, organization, repoNames).
+		Return(migration, nil)
+
+	mocks.githubClient.EXPECT().
+		GetMigrationStatus(mock.Anything, organization, int64(12345)).
+		Return(migration, nil)
+
+	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(server.URL, nil)
+
+	useCase := mocks.createUseCase()
+
+	// When
+	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
+
+	// Then
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to download archive, got status: 500 Internal Server Error")
+	assert.Empty(t, result)
+}
+
+func TestCreateBackupUseCase_HTTPGetError(t *testing.T) {
+	// Given
+	mocks := newCreateBackupTestMocks(t)
+
+	organization := "kumojin"
+	repos := []gh.Repository{
+		{Name: gh.Ptr("repo1")},
+		{Name: gh.Ptr("repo2")},
+	}
+	repoNames := []string{"repo1", "repo2"}
+	migration := &gh.Migration{
+		ID:    gh.Ptr(int64(12345)),
+		State: gh.Ptr("exported"),
+	}
+	// Use an invalid URL scheme to force an HTTP error
+	invalidURL := "invalid://not-a-valid-url"
+
+	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
+
+	mocks.githubClient.EXPECT().
+		StartMigration(mock.Anything, organization, repoNames).
+		Return(migration, nil)
+
+	mocks.githubClient.EXPECT().
+		GetMigrationStatus(mock.Anything, organization, int64(12345)).
+		Return(migration, nil)
+
+	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(invalidURL, nil)
+
+	useCase := mocks.createUseCase()
+
+	// When
+	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
+
+	// Then
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to download archive")
+	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_ContextCancellation(t *testing.T) {

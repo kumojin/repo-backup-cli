@@ -3,7 +3,7 @@ package uc
 import (
 	"context"
 	"fmt"
-	"net/http"
+	"io"
 	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/storage"
@@ -29,20 +29,9 @@ func NewCreateRemoteBackupUseCase(
 }
 
 func (uc *createRemoteBackupUseCase) Do(ctx context.Context, organization string) (string, error) {
-	saveMigrationArchive := func(url string) (string, error) {
-		resp, err := http.Get(url)
-		if err != nil {
-			return "", err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return "", fmt.Errorf("could not download archive, got status: %s", resp.Status)
-		}
-
+	saveMigrationArchive := func(reader io.Reader) (string, error) {
 		blobName := fmt.Sprintf("%s-org-migration.tar.gz", time.Now().Format(time.DateOnly))
-
-		return uc.blobRepository.Upload(ctx, blobName, resp.Body)
+		return uc.blobRepository.Upload(ctx, blobName, reader)
 	}
 
 	return uc.createBackupUseCase.Do(ctx, organization, saveMigrationArchive)
