@@ -1,9 +1,13 @@
 package main
 
 import (
+	"log"
+
 	"github.com/kumojin/repo-backup-cli/cmd"
 )
 
 func main() {
-	cmd.RootCommand().Execute()
+	if err := cmd.RootCommand().Execute(); err != nil {
+		log.Fatal(err)
+	}
 }

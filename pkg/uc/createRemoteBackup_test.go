@@ -51,7 +51,7 @@ func TestCreateRemoteBackupUseCase_Success(t *testing.T) {
 		Do(mock.Anything, organization, mock.AnythingOfType("uc.SaveBackupFunc")).
 		Run(func(ctx context.Context, org string, saveFunc SaveBackupFunc) {
 			reader := strings.NewReader(archiveContent)
-			saveFunc(reader)
+			_, _ = saveFunc(reader)
 		}).
 		Return(expectedBlobURL, nil)
 
@@ -141,7 +141,7 @@ func TestCreateRemoteBackupUseCase_BlobNameFormat(t *testing.T) {
 		Do(mock.Anything, organization, mock.AnythingOfType("uc.SaveBackupFunc")).
 		Run(func(ctx context.Context, org string, saveFunc SaveBackupFunc) {
 			reader := strings.NewReader(archiveContent)
-			saveFunc(reader)
+			_, _ = saveFunc(reader)
 		}).
 		Return(expectedBlobURL, nil)
 

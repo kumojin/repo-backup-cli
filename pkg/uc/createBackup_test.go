@@ -82,7 +82,7 @@ func TestCreateBackupUseCase_Success(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(archiveContent))
+		_, _ = w.Write([]byte(archiveContent))
 	}))
 	defer server.Close()
 
@@ -134,7 +134,7 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(archiveContent))
+		_, _ = w.Write([]byte(archiveContent))
 	}))
 	defer server.Close()
 
@@ -350,7 +350,7 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(archiveContent))
+		_, _ = w.Write([]byte(archiveContent))
 	}))
 	defer server.Close()
 
@@ -396,7 +396,7 @@ func TestCreateBackupUseCase_HTTPStatusNotOK(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal Server Error"))
+		_, _ = w.Write([]byte("Internal Server Error"))
 	}))
 	defer server.Close()
 

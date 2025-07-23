@@ -28,7 +28,7 @@ func NewAzureStorageConfig() (AzureStorageConfig, error) {
 	containerName := viper.GetString(azureStorageContainerNameKey)
 
 	if accountName == "" || apiKey == "" || accountUrl == "" || containerName == "" {
-		return AzureStorageConfig{}, fmt.Errorf("Azure Storage configuration is incomplete")
+		return AzureStorageConfig{}, fmt.Errorf("azure Storage configuration is incomplete")
 	}
 
 	return AzureStorageConfig{
@@ -55,13 +55,13 @@ func New(filepath string) (*Config, error) {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil, fmt.Errorf("Error reading config file: %w", err)
+			return nil, fmt.Errorf("error reading config file: %w", err)
 		}
 	}
 
 	token := viper.GetString(githubTokenKey)
 	if token == "" {
-		return nil, fmt.Errorf("GitHub token is not set in the configuration file")
+		return nil, fmt.Errorf("github token is not set in the configuration file")
 	}
 
 	azureStorageConfig, err := NewAzureStorageConfig()

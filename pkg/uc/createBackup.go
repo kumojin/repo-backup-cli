@@ -92,7 +92,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 			if err != nil {
 				return "", fmt.Errorf("failed to download archive: %w", err)
 			}
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 
 			if resp.StatusCode != http.StatusOK {
 				return "", fmt.Errorf("failed to download archive, got status: %s", resp.Status)

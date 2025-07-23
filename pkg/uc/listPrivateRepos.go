@@ -7,8 +7,6 @@ import (
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 
-const maxPerPage = 100
-
 type ListPrivateReposUseCase interface {
 	Do(ctx context.Context, organization string) ([]gh.Repository, error)
 }

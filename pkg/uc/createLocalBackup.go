@@ -28,7 +28,7 @@ func (uc *createLocalBackupUseCase) Do(ctx context.Context, organization string,
 		if err != nil {
 			return "", err
 		}
-		defer out.Close()
+		defer func() { _ = out.Close() }()
 
 		_, err = io.Copy(out, reader)
 		if err != nil {
