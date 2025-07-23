@@ -54,7 +54,9 @@ func New(filepath string) (*Config, error) {
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("Error reading config file: %w", err)
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			return nil, fmt.Errorf("Error reading config file: %w", err)
+		}
 	}
 
 	token := viper.GetString(githubTokenKey)
