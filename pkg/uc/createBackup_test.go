@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	gh "github.com/google/go-github/v73/github"
 	"github.com/kumojin/repo-backup-cli/pkg/github"
@@ -59,10 +58,9 @@ func (m *createBackupTestMocks) createUseCase() CreateBackupUseCase {
 }
 
 func TestCreateBackupUseCase_Success(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -76,42 +74,35 @@ func TestCreateBackupUseCase_Success(t *testing.T) {
 	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
 	savePath := "/tmp/backup.zip"
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(migration, nil)
 
-	// Setup expectations for getting archive URL
 	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
 
-	// Setup expectations for saving backup
 	mocks.saveBackupMock.On("Do", archiveURL).Return(savePath, nil)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, savePath, result)
 	mocks.saveBackupMock.AssertExpectations(t)
 }
 
 func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -129,15 +120,12 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
 	savePath := "/tmp/backup.zip"
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(pendingMigration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(pendingMigration, nil).
@@ -148,52 +136,45 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 		Return(migration, nil).
 		Once()
 
-	// Setup expectations for getting archive URL
 	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
 
-	// Setup expectations for saving backup
 	mocks.saveBackupMock.On("Do", archiveURL).Return(savePath, nil)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, savePath, result)
 	mocks.saveBackupMock.AssertExpectations(t)
 }
 
 func TestCreateBackupUseCase_ListRepositoriesError(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	expectedError := errors.New("failed to list repositories")
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return([]gh.Repository{}, expectedError)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to list private repositories")
 	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_StartMigrationError(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -202,31 +183,27 @@ func TestCreateBackupUseCase_StartMigrationError(t *testing.T) {
 	repoNames := []string{"repo1", "repo2"}
 	expectedError := errors.New("failed to start migration")
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(nil, expectedError)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to start migration")
 	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_FailedMigration(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -242,36 +219,31 @@ func TestCreateBackupUseCase_FailedMigration(t *testing.T) {
 		State: gh.Ptr("failed"),
 	}
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(failedMigration, nil)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "migration failed")
 	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_GetMigrationStatusError(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -284,36 +256,31 @@ func TestCreateBackupUseCase_GetMigrationStatusError(t *testing.T) {
 	}
 	expectedError := errors.New("failed to get migration status")
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(nil, expectedError)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to get migration status")
 	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_GetArchiveURLError(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -326,36 +293,31 @@ func TestCreateBackupUseCase_GetArchiveURLError(t *testing.T) {
 	}
 	expectedError := errors.New("failed to get archive URL")
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(migration, nil)
 
-	// Setup expectations for getting archive URL
 	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return("", expectedError)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to get migration archive URL")
 	assert.Empty(t, result)
 }
 
 func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
 	// Setup test data
@@ -372,42 +334,35 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 	archiveURL := "https://api.github.com/archive/kumojin/12345.zip"
 	expectedError := errors.New("failed to save backup")
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
 		Return(migration, nil)
 
-	// Setup expectations for getting archive URL
 	mocks.getOrganizationArchiveUrl.EXPECT().Do(mock.Anything, organization, int64(12345)).Return(archiveURL, nil)
 
-	// Setup expectations for saving backup
 	mocks.saveBackupMock.On("Do", archiveURL).Return("", expectedError)
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	// When
 	result, err := useCase.Do(context.Background(), organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Empty(t, result)
 	mocks.saveBackupMock.AssertExpectations(t)
 }
 
 func TestCreateBackupUseCase_ContextCancellation(t *testing.T) {
-	// Setup mocks
+	// Given
 	mocks := newCreateBackupTestMocks(t)
 
-	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
 		{Name: gh.Ptr("repo1")},
@@ -419,35 +374,27 @@ func TestCreateBackupUseCase_ContextCancellation(t *testing.T) {
 		State: gh.Ptr("pending"),
 	}
 
-	// Create a context that will be cancelled
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// Setup expectations for listing repositories
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
 
-	// Setup expectations for starting migration
 	mocks.githubClient.EXPECT().
 		StartMigration(mock.Anything, organization, repoNames).
 		Return(migration, nil)
 
-	// Setup expectations for getting migration status - never called because we'll cancel the context
 	mocks.githubClient.EXPECT().
 		GetMigrationStatus(mock.Anything, organization, int64(12345)).
-		Run(func(ctx context.Context, org string, id int64) {
-			// Cancel the context before returning
-			cancel()
-			// Sleep to ensure the context cancellation is processed
-			time.Sleep(1)
-		}).
-		Return(nil, context.Canceled)
+		Return(migration, nil).
+		Maybe()
 
-	// Create use case with mocks
 	useCase := mocks.createUseCase()
 
-	// Execute the use case
+	cancel()
+
+	// When
 	result, err := useCase.Do(ctx, organization, mocks.saveBackupFunc)
 
-	// Assertions
+	// Then
 	assert.ErrorIs(t, err, context.Canceled)
 	assert.Empty(t, result)
 }

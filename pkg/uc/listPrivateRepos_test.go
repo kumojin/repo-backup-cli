@@ -12,10 +12,9 @@ import (
 )
 
 func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) {
-	// Create mock client
+	// Given
 	mockClient := github.NewMockClient(t)
 
-	// Setup mock expectations
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
 		Return(
@@ -39,13 +38,12 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 			nil,
 		)
 
-	// Create use case with mock client
 	useCase := NewListPrivateReposUseCase(mockClient)
 
-	// Execute the use case
+	// When
 	repos, err := useCase.Do(context.Background(), "kumojin")
 
-	// Assertions
+	// Then
 	assert.NoError(t, err)
 
 	expectedRepos := []gh.Repository{
@@ -64,42 +62,38 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 }
 
 func TestListPrivateReposUseCase_ErrorFromGitHubClient(t *testing.T) {
-	// Create mock client
+	// Given
 	mockClient := github.NewMockClient(t)
 
-	// Setup mock expectations
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
 		Return(nil, errors.New("github API error"))
 
-	// Create use case with mock client
 	useCase := NewListPrivateReposUseCase(mockClient)
 
-	// Execute the use case
+	// When
 	repos, err := useCase.Do(context.Background(), "kumojin")
 
-	// Assertions
+	// Then
 	assert.Error(t, err)
 	assert.Equal(t, "github API error", err.Error())
 	assert.Nil(t, repos)
 }
 
 func TestListPrivateReposUseCase_NoRepositoriesFound(t *testing.T) {
-	// Create mock client
+	// Given
 	mockClient := github.NewMockClient(t)
 
-	// Setup mock expectations
 	mockClient.EXPECT().
 		ListOrgRepos(mock.Anything, "kumojin", "private").
 		Return([]*gh.Repository{}, nil)
 
-	// Create use case with mock client
 	useCase := NewListPrivateReposUseCase(mockClient)
 
-	// Execute the use case
+	// When
 	repos, err := useCase.Do(context.Background(), "kumojin")
 
-	// Assertions
+	// Then
 	assert.NoError(t, err)
 	assert.Empty(t, repos)
 }
