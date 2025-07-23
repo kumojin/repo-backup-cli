@@ -54,7 +54,7 @@ func TestCreateRemoteBackupUseCase_Success(t *testing.T) {
 
 	mocks.blobRepository.EXPECT().
 		Upload(mock.Anything, mock.MatchedBy(func(blobName string) bool {
-			return strings.Contains(blobName, "org-migration.tar.gz")
+			return strings.Contains(blobName, "kumojin-migration.tar.gz")
 		}), mock.AnythingOfType("*strings.Reader")).
 		Run(func(ctx context.Context, blobName string, reader io.Reader) {
 			content, err := io.ReadAll(reader)
@@ -113,7 +113,7 @@ func TestCreateRemoteBackupUseCase_BlobUploadError(t *testing.T) {
 
 	mocks.blobRepository.EXPECT().
 		Upload(mock.Anything, mock.MatchedBy(func(blobName string) bool {
-			return strings.Contains(blobName, "org-migration.tar.gz")
+			return strings.Contains(blobName, "kumojin-migration.tar.gz")
 		}), mock.AnythingOfType("*strings.Reader")).
 		Return("", uploadError)
 
@@ -160,6 +160,6 @@ func TestCreateRemoteBackupUseCase_BlobNameFormat(t *testing.T) {
 	// Then
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBlobURL, result)
-	assert.Contains(t, capturedBlobName, "-org-migration.tar.gz")
+	assert.Contains(t, capturedBlobName, "-kumojin-migration.tar.gz")
 	assert.Contains(t, capturedBlobName, "2025-07-23") // Current date based on context
 }
