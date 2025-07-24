@@ -3,6 +3,8 @@ package uc
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/github"
@@ -51,14 +53,19 @@ func (uc *getOrganizationArchiveUrlUseCase) Do(ctx context.Context, organization
 	var err error
 	var archiveURL string
 
-	fmt.Println("Trying to get migration archive URL...")
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+		slog.String("organization", organization),
+		slog.Int64("organizationID", organizationID),
+	)
+
+	logger.Info("trying to get migration archive URL")
 
 	for {
 		select {
 		case <-ticker.C:
 			archiveURL, err = uc.gitHubClient.GetMigrationArchiveURL(ctx, organization, organizationID)
 			if err == nil {
-				fmt.Println("Migration archive URL retrieved successfully.")
+				logger.Info("migration archive url retrieved successfully", slog.String("archiveURL", archiveURL))
 				return archiveURL, nil
 			}
 		case <-ctxTimeout.Done():

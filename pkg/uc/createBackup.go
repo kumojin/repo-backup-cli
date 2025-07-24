@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/github"
@@ -66,6 +68,11 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 	ticker := time.NewTicker(uc.pollingInterval)
 	defer ticker.Stop()
 
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+		slog.String("organization", organization),
+		slog.Int64("migrationID", migration.GetID()),
+	)
+
 	for {
 		select {
 		case <-ticker.C:
@@ -79,7 +86,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 			}
 
 			if migration.GetState() != "exported" {
-				fmt.Println("Migration in progress, waiting for completion...")
+				logger.Info("migration in progress, waiting for completion")
 				break
 			}
 

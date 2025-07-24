@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
+	"os"
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
 	"github.com/kumojin/repo-backup-cli/pkg/config"
@@ -63,7 +64,13 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	fmt.Printf("Backup completed successfully! File saved at %s\n", archivePath)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+		slog.String("organization", cfg.Organization),
+		slog.String("backupURL", archivePath),
+		slog.String("backupType", "local"),
+	)
+
+	logger.Info("backup completed successfully")
 
 	return nil
 }
@@ -89,7 +96,13 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	fmt.Printf("Backup completed successfully! File saved remotely at %s\n", remoteUrl)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+		slog.String("organization", cfg.Organization),
+		slog.String("backupURL", remoteUrl),
+		slog.String("backupType", "remote"),
+	)
+
+	logger.Info("backup completed successfully")
 
 	return nil
 }
