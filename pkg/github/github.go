@@ -44,6 +44,8 @@ func (c *defaultClient) GetMigrationStatus(ctx context.Context, organization str
 func (c *defaultClient) StartMigration(ctx context.Context, organization string, repoNames []string) (*gh.Migration, error) {
 	migration, _, err := c.githubClient.Migrations.StartMigration(ctx, organization, repoNames, &gh.MigrationOptions{
 		ExcludeAttachments: true,
+		ExcludeReleases:    true,
+		Exclude:            []string{"repositories"},
 	})
 	if err != nil {
 		return nil, err
