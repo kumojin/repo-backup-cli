@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.1
-	github.com/google/go-github/v73 v73.0.0
+	github.com/google/go-github/v74 v74.0.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
