@@ -40,3 +40,4 @@ jobs:
           AZURE_STORAGE_API_KEY: ${{ secrets.AZURE_STORAGE_API_KEY }}
           AZURE_STORAGE_ACCOUNT_URL: ${{ secrets.AZURE_STORAGE_ACCOUNT_URL }}
           AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
