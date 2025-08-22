@@ -60,6 +60,72 @@ just setup
 
 The above command will create a `.env` file in the root directory from the `.env.template` file. You should replace the variables in it with the correct values.
 
+## Building from Source
+
+### Prerequisites
+
+- [Go 1.25+](https://golang.org/doc/install) - The project requires Go version 1.25 or later
+- [Just](https://github.com/casey/just) - **(Optional)** Command runner for development tasks (installable via `brew install just`)
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/kumojin/repo-backup-cli.git
+cd repo-backup-cli
+```
+
+### Install Dependencies
+
+Install all development dependencies using the included Brewfile:
+
+```bash
+brew bundle
+```
+
+This will install Go, Just, and other required tools.
+
+### Build the Binary
+
+You can build the project using either Go directly or the included Justfile:
+
+#### Using Go
+
+```bash
+go build -o rbk .
+```
+
+#### Using Just
+
+```bash
+just build
+```
+
+Both commands will create an executable binary named `rbk` in the current directory.
+
+### Install Globally (Optional)
+
+To install the binary globally so you can run `rbk` from anywhere:
+
+```bash
+go install .
+```
+
+This will install the binary to your `$GOPATH/bin` directory (make sure it's in your `$PATH`).
+
+### Verify Installation
+
+Test that the binary works correctly:
+
+```bash
+./rbk --help
+```
+
+Or if you installed globally:
+
+```bash
+rbk --help
+```
+
 ## Usage
 
 ### Basic Command Structure
