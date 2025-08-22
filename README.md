@@ -1,6 +1,6 @@
 # Repo Backup CLI
 
-A command-line tool for backing up private GitHub repositories from an organization to local storage or remote Azure Blob Storage.
+A command-line tool for backing up private GitHub repositories from an organization to local storage or remote object storage.
 
 ## Overview
 
@@ -8,9 +8,36 @@ Repo Backup CLI (rbk) provides functionality to:
 
 - List all private, non-archived repositories in a GitHub organization
 - Create local backups of repositories as archive files
-- Create remote backups to Azure Blob Storage
+- Create remote backups to object storage (Azure Blob Storage or S3-compatible storage)
 
 The backup feature of this CLI leverages GitHub's Migration API to create a migration archive of all private non-archived repositories from a specified organization and then downloads or uploads this archive to your desired storage location.
+
+## Storage Backends
+
+The CLI supports two different storage backends for remote backups:
+
+### Azure Blob Storage
+
+Azure Blob Storage is Microsoft's object storage solution for the cloud. To use Azure Blob Storage as your backend:
+
+- Set `STORAGE_BACKEND=azure` in your configuration
+- Configure the following environment variables:
+  - `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
+  - `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
+  - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
+  - `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
+
+### S3-Compatible Object Storage
+
+The CLI also supports S3-compatible object storage services (such as MinIO, AWS S3, DigitalOcean Spaces, etc.). To use S3-compatible storage:
+
+- Set `STORAGE_BACKEND=object` in your configuration
+- Configure the following environment variables:
+  - `OBJECT_STORAGE_ENDPOINT` - The endpoint URL of your S3-compatible service
+  - `OBJECT_STORAGE_ACCESS_KEY` - Your access key
+  - `OBJECT_STORAGE_SECRET_KEY` - Your secret key
+  - `OBJECT_STORAGE_BUCKET_NAME` - The bucket name where backups will be stored
+  - `OBJECT_STORAGE_USE_SSL` - Whether to use SSL (true/false, defaults to true)
 
 ## Development Setup
 
@@ -76,13 +103,13 @@ This will save the archive as `archive.tar.gz` in the current directory.
 
 ##### Remote Backup
 
-Upload the backup archive to Azure Blob Storage:
+Upload the backup archive to your configured object storage backend:
 
 ```bash
 rbk backup remote
 ```
 
-This will create a blob with the name format `YYYY-MM-DD-org-migration.tar.gz` and upload it to your configured Azure container.
+This will create a blob/object with the name format `YYYY-MM-DD-org-migration.tar.gz` and upload it to your configured storage container/bucket (Azure Blob Storage or S3-compatible storage).
 
 ## Example
 
@@ -93,7 +120,7 @@ rbk repos --organization myorg
 # Create a local backup of repositories
 rbk backup local --organization myorg
 
-# Create a remote backup to Azure Blob Storage
+# Create a remote backup to object storage
 rbk backup remote --organization myorg --config custom.env
 ```
 
@@ -124,10 +151,22 @@ The workflow file is located at `.github/workflows/daily-backup.yml`.
 Add the following secrets to your GitHub repository:
 
 - `CLI_GITHUB_TOKEN` - A GitHub personal access token with the necessary permissions
+- `STORAGE_BACKEND` - The storage backend to use (`azure` or `object`)
+
+**For Azure Blob Storage (`STORAGE_BACKEND=azure`):**
+
 - `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
 - `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
 - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
 - `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
+
+**For S3-Compatible Storage (`STORAGE_BACKEND=object`):**
+
+- `OBJECT_STORAGE_ENDPOINT` - The endpoint URL of your S3-compatible service
+- `OBJECT_STORAGE_ACCESS_KEY` - Your access key
+- `OBJECT_STORAGE_SECRET_KEY` - Your secret key
+- `OBJECT_STORAGE_BUCKET_NAME` - The bucket name where backups will be stored
+- `OBJECT_STORAGE_USE_SSL` - Whether to use SSL (true/false)
 
 #### GitHub Token Requirements
 
