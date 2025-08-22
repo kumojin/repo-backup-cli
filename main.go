@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -31,7 +32,7 @@ func main() {
 	rootCmd := cmd.RootCommand()
 
 	err := rootCmd.ParseFlags(os.Args[1:])
-	if err != nil {
+	if err != nil && err != flag.ErrHelp { // Ignore flag parsing errors if it's just help, seems like cobra does not handle those
 		log.Fatalf("could not parse flags: %v", err)
 	}
 

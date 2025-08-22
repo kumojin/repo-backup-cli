@@ -49,6 +49,4 @@ func runReposCommand(cmd *cobra.Command, args []string) {
 	for _, repo := range repos {
 		println(*repo.Name)
 	}
-
-	return
 }
