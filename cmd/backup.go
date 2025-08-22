@@ -48,7 +48,7 @@ func RemoteBackupCommand() *cobra.Command {
 }
 
 func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
-	cfg, err := getConfig()
+	cfg, err := GetConfig()
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 }
 
 func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
-	cfg, err := getConfig()
+	cfg, err := GetConfig()
 	if err != nil {
 		return err
 	}

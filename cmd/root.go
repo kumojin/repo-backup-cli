@@ -13,8 +13,10 @@ var (
 
 func RootCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "rbk",
-		Short: "CLI tool to backup private repositories from one a github organization to a remote file storage service",
+		Use:           "rbk",
+		Short:         "CLI tool to backup private repositories from one a github organization to a remote file storage service",
+		SilenceUsage:  true,
+		SilenceErrors: true,
 	}
 
 	cmd.PersistentFlags().StringVarP(&configFilepath, "config", "c", ".env", "Path to environment configuration file")
@@ -26,7 +28,7 @@ func RootCommand() *cobra.Command {
 	return cmd
 }
 
-func getConfig() (*config.Config, error) {
+func GetConfig() (*config.Config, error) {
 	if rootConfig != nil {
 		return rootConfig, nil
 	}

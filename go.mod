@@ -1,9 +1,10 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.24.4
+go 1.25
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.2
+	github.com/getsentry/sentry-go v0.35.1
 	github.com/google/go-github/v74 v74.0.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1

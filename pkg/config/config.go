@@ -12,6 +12,7 @@ const (
 	azureStorageAccountUrlKey    = "AZURE_STORAGE_ACCOUNT_URL"
 	azureStorageContainerNameKey = "AZURE_STORAGE_CONTAINER_NAME"
 	githubTokenKey               = "CLI_GITHUB_TOKEN"
+	sentryDsnKey                 = "SENTRY_DSN"
 )
 
 type AzureStorageConfig struct {
@@ -39,8 +40,25 @@ func NewAzureStorageConfig() (AzureStorageConfig, error) {
 	}, nil
 }
 
+type SentryConfig struct {
+	Dsn string
+}
+
+func NewSentryConfig() (SentryConfig, error) {
+	dsn := viper.GetString(sentryDsnKey)
+
+	if dsn == "" {
+		return SentryConfig{}, fmt.Errorf("sentry config is incomplete")
+	}
+
+	return SentryConfig{
+		Dsn: dsn,
+	}, nil
+}
+
 type Config struct {
 	AzureStorageConfig AzureStorageConfig
+	SentryConfig       SentryConfig
 	GitHubToken        string
 	Organization       string
 }
@@ -69,16 +87,24 @@ func New(filepath string) (*Config, error) {
 		return nil, err
 	}
 
+	sentryConfig, err := NewSentryConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
 		AzureStorageConfig: azureStorageConfig,
 		GitHubToken:        token,
+		SentryConfig:       sentryConfig,
 	}, nil
 }
 
 func (c *Config) WithOrganization(organization string) *Config {
-	updatedConfig := *c
+	c.Organization = organization
 
-	updatedConfig.Organization = organization
+	return c
+}
 
-	return &updatedConfig
+func (c *Config) GetSentryConfig() SentryConfig {
+	return c.SentryConfig
 }

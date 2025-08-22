@@ -21,7 +21,7 @@ func ReposCommand() *cobra.Command {
 }
 
 func runReposCommand(cmd *cobra.Command, args []string) error {
-	cfg, err := getConfig()
+	cfg, err := GetConfig()
 	if err != nil {
 		return err
 	}

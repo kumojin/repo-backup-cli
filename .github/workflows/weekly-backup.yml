@@ -3,7 +3,7 @@ name: Weekly Repository Backup
 on:
   schedule:
     # Run every Sunday at midnight UTC
-    - cron: '0 0 * * 0'
+    - cron: "0 0 * * 0"
   workflow_dispatch: # Allows manual triggering of the workflow
     inputs:
       organization:
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.4"
+          go-version: "1.25"
           check-latest: false
 
       - name: Build CLI
