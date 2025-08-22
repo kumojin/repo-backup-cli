@@ -71,7 +71,7 @@ rbk [command] [flags]
 ### Global Flags
 
 - `-c, --config` - Path to environment configuration file (default: ".env")
-- `-o, --organization` - GitHub organization to use (default: "Kumojin")
+- `-o, --organization` - GitHub organization to use
 
 ### Available Commands
 

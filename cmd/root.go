@@ -20,7 +20,9 @@ func RootCommand() *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVarP(&configFilepath, "config", "c", ".env", "Path to environment configuration file")
-	cmd.PersistentFlags().StringVarP(&organization, "organization", "o", "Kumojin", "GitHub organization to use")
+	cmd.PersistentFlags().StringVarP(&organization, "organization", "o", "", "GitHub organization to use")
+
+	cmd.MarkPersistentFlagRequired("organization")
 
 	cmd.AddCommand(ReposCommand())
 	cmd.AddCommand(BackupCommand())

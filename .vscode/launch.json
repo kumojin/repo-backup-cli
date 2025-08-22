@@ -18,7 +18,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}",
-            "args": ["backup", "local"],
+            "args": ["backup", "local", "-o", "your_org_here"],
         },
         {
             "name": "Remote backup",
@@ -26,7 +26,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}",
-            "args": ["backup", "remote"],
+            "args": ["backup", "remote", "-o", "your_org_here"],
         }
     ]
 }
