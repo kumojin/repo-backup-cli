@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +10,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/kumojin/repo-backup-cli/cmd"
 	"github.com/kumojin/repo-backup-cli/pkg/config"
+	"github.com/spf13/pflag"
 )
 
 func initSentry(cfg config.SentryConfig) (func(), error) {
@@ -33,7 +33,7 @@ func main() {
 	rootCmd := cmd.RootCommand()
 
 	err := rootCmd.ParseFlags(os.Args[1:])
-	if err != nil && !errors.As(err, &flag.ErrHelp) { // Ignore flag parsing errors if it's just help, seems like cobra does not handle those
+	if err != nil && !errors.Is(err, pflag.ErrHelp) {
 		log.Fatalf("could not parse flags: %v", err)
 	}
 
