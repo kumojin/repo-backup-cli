@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/github"
+	"github.com/kumojin/repo-backup-cli/pkg/logging"
 )
 
 const (
@@ -53,7 +53,7 @@ func (uc *getOrganizationArchiveUrlUseCase) Do(ctx context.Context, organization
 	var err error
 	var archiveURL string
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+	logger := logging.NewLogger().With(
 		slog.String("organization", organization),
 		slog.Int64("organizationID", organizationID),
 	)

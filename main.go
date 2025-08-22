@@ -36,11 +36,13 @@ func main() {
 		log.Fatalf("could not get config: %v", err)
 	}
 
-	flush, err := initSentry(cfg.GetSentryConfig())
-	if err != nil {
-		log.Fatalf("could not init sentry: %v", err)
+	if cfg.IsSentryEnabled() {
+		flush, err := initSentry(cfg.GetSentryConfig())
+		if err != nil {
+			log.Fatalf("could not init sentry: %v", err)
+		}
+		defer flush()
 	}
-	defer flush()
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)

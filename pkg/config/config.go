@@ -44,16 +44,10 @@ type SentryConfig struct {
 	Dsn string
 }
 
-func NewSentryConfig() (SentryConfig, error) {
-	dsn := viper.GetString(sentryDsnKey)
-
-	if dsn == "" {
-		return SentryConfig{}, fmt.Errorf("sentry config is incomplete")
-	}
-
+func NewSentryConfig() SentryConfig {
 	return SentryConfig{
-		Dsn: dsn,
-	}, nil
+		Dsn: viper.GetString(sentryDsnKey),
+	}
 }
 
 type Config struct {
@@ -87,15 +81,10 @@ func New(filepath string) (*Config, error) {
 		return nil, err
 	}
 
-	sentryConfig, err := NewSentryConfig()
-	if err != nil {
-		return nil, err
-	}
-
 	return &Config{
 		AzureStorageConfig: azureStorageConfig,
 		GitHubToken:        token,
-		SentryConfig:       sentryConfig,
+		SentryConfig:       NewSentryConfig(),
 	}, nil
 }
 
@@ -107,4 +96,8 @@ func (c *Config) WithOrganization(organization string) *Config {
 
 func (c *Config) GetSentryConfig() SentryConfig {
 	return c.SentryConfig
+}
+
+func (c *Config) IsSentryEnabled() bool {
+	return c.SentryConfig.Dsn != ""
 }

@@ -7,10 +7,10 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/kumojin/repo-backup-cli/pkg/github"
+	"github.com/kumojin/repo-backup-cli/pkg/logging"
 )
 
 var ErrMigrationFailed = errors.New("migration failed")
@@ -68,7 +68,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 	ticker := time.NewTicker(uc.pollingInterval)
 	defer ticker.Stop()
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+	logger := logging.NewLogger().With(
 		slog.String("organization", organization),
 		slog.Int64("migrationID", migration.GetID()),
 	)

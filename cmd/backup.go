@@ -3,11 +3,11 @@ package cmd
 import (
 	"context"
 	"log/slog"
-	"os"
 
 	appContext "github.com/kumojin/repo-backup-cli/context"
 	"github.com/kumojin/repo-backup-cli/pkg/config"
 	"github.com/kumojin/repo-backup-cli/pkg/github"
+	"github.com/kumojin/repo-backup-cli/pkg/logging"
 	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
@@ -64,7 +64,7 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+	logger := logging.NewLogger().With(
 		slog.String("organization", cfg.Organization),
 		slog.String("backupURL", archivePath),
 		slog.String("backupType", "local"),
@@ -96,7 +96,7 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With(
+	logger := logging.NewLogger().With(
 		slog.String("organization", cfg.Organization),
 		slog.String("backupURL", remoteUrl),
 		slog.String("backupType", "remote"),
