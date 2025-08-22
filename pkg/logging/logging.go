@@ -1,37 +1,19 @@
 package logging
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 	"os"
 
-	"github.com/getsentry/sentry-go"
+	sentrySlog "github.com/getsentry/sentry-go/slog"
+	slogmulti "github.com/samber/slog-multi"
 )
 
-type Logger struct {
-	slogger *slog.Logger
-}
+func NewLogger(ctx context.Context) *slog.Logger {
+	handler := slogmulti.Fanout(slog.NewJSONHandler(os.Stdout, nil), sentrySlog.Option{
+		LogLevel:  []slog.Level{slog.LevelWarn, slog.LevelInfo},
+		AddSource: true,
+	}.NewSentryHandler(ctx))
 
-func NewLogger() *Logger {
-	return &Logger{
-		slogger: slog.New(slog.NewJSONHandler(os.Stdout, nil)),
-	}
-}
-
-func (l *Logger) With(args ...any) *Logger {
-	l.slogger = l.slogger.With(args...)
-
-	return l
-}
-
-func (l *Logger) Info(msg string, args ...any) {
-	sentry.CaptureMessage(fmt.Sprintf(msg, args...))
-
-	l.slogger.Info(msg, args...)
-}
-
-func (l *Logger) Error(msg string, args ...any) {
-	sentry.CaptureException(fmt.Errorf(msg, args...))
-
-	l.slogger.Error(msg, args...)
+	return slog.New(handler)
 }

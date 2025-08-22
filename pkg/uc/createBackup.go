@@ -68,7 +68,7 @@ func (uc *createBackupUseCase) Do(ctx context.Context, organization string, save
 	ticker := time.NewTicker(uc.pollingInterval)
 	defer ticker.Stop()
 
-	logger := logging.NewLogger().With(
+	logger := logging.NewLogger(ctx).With(
 		slog.String("organization", organization),
 		slog.Int64("migrationID", migration.GetID()),
 	)

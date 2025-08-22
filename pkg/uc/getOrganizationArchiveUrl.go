@@ -53,7 +53,7 @@ func (uc *getOrganizationArchiveUrlUseCase) Do(ctx context.Context, organization
 	var err error
 	var archiveURL string
 
-	logger := logging.NewLogger().With(
+	logger := logging.NewLogger(ctx).With(
 		slog.String("organization", organization),
 		slog.Int64("organizationID", organizationID),
 	)

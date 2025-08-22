@@ -18,7 +18,6 @@ func BackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "backup",
 		Short: "Commands to backup repositories from an organization",
-		RunE:  runReposCommand,
 	}
 
 	cmd.AddCommand(LocalBackupCommand())
@@ -31,7 +30,7 @@ func LocalBackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "local",
 		Short: "Backup repositories to local storage",
-		RunE:  runLocalBackupCommand,
+		Run:   runLocalBackupCommand,
 	}
 
 	return cmd
@@ -41,49 +40,57 @@ func RemoteBackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remote",
 		Short: "Backup repositories to remote storage",
-		RunE:  runRemoteBackupCommand,
+		Run:   runRemoteBackupCommand,
 	}
 
 	return cmd
 }
 
-func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
+func runLocalBackupCommand(_ *cobra.Command, _ []string) {
+	ctx := context.Background()
+	logger := logging.NewLogger(ctx).With(
+		slog.String("backupType", "local"),
+	)
+
 	cfg, err := GetConfig()
 	if err != nil {
-		return err
+		logger.Error("could not get config", slog.Any("error", err))
+		return
 	}
+
+	logger = logger.With(slog.String("organization", cfg.Organization))
 
 	createBackupUseCase := getCreateBackupUseCase(cfg)
 
 	usecase := uc.NewCreateLocalBackupUseCase(createBackupUseCase)
 
-	ctx := context.Background()
-
 	archivePath, err := usecase.Do(ctx, cfg.Organization, "archive.tar.gz")
 	if err != nil {
-		return err
+		logger.Error("could not create local backup", slog.Any("error", err))
+		return
 	}
 
-	logger := logging.NewLogger().With(
-		slog.String("organization", cfg.Organization),
-		slog.String("backupURL", archivePath),
-		slog.String("backupType", "local"),
-	)
-
-	logger.Info("backup completed successfully")
-
-	return nil
+	logger.With(slog.String("backupURL", archivePath)).Info("backup completed successfully")
 }
 
-func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
+func runRemoteBackupCommand(_ *cobra.Command, _ []string) {
+	ctx := context.Background()
+	logger := logging.NewLogger(ctx).With(
+		slog.String("backupType", "remote"),
+	)
+
 	cfg, err := GetConfig()
 	if err != nil {
-		return err
+		logger.Error("could not get config", slog.Any("error", err))
+		return
 	}
+
+	logger = logger.With(slog.String("organization", cfg.Organization))
 
 	azClient, err := appContext.GetAzureBlobClient(cfg)
 	if err != nil {
-		return err
+		logger.Error("could not get azure blob client", slog.Any("error", err))
+		return
 	}
 	blobRepository := azure.NewBlobRepository(cfg, azClient)
 
@@ -91,20 +98,15 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 
 	usecase := uc.NewCreateRemoteBackupUseCase(blobRepository, createBackupUseCase)
 
-	remoteUrl, err := usecase.Do(context.Background(), cfg.Organization)
+	remoteUrl, err := usecase.Do(ctx, cfg.Organization)
 	if err != nil {
-		return err
+		logger.Error("could not create remote backup", slog.Any("error", err))
+		return
 	}
 
-	logger := logging.NewLogger().With(
-		slog.String("organization", cfg.Organization),
+	logger.With(
 		slog.String("backupURL", remoteUrl),
-		slog.String("backupType", "remote"),
-	)
-
-	logger.Info("backup completed successfully")
-
-	return nil
+	).Info("backup completed successfully")
 }
 
 func getCreateBackupUseCase(cfg *config.Config) uc.CreateBackupUseCase {

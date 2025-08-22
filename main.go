@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -12,7 +13,12 @@ import (
 
 func initSentry(cfg config.SentryConfig) (func(), error) {
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn: cfg.Dsn,
+		Dsn:              cfg.Dsn,
+		EnableLogs:       true,
+		SendDefaultPII:   true,
+		AttachStacktrace: true,
+		EnableTracing:    true,
+		TracesSampleRate: 1.0,
 	})
 	if err != nil {
 		return nil, err
@@ -45,6 +51,8 @@ func main() {
 	}
 
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		sentry.CaptureException(fmt.Errorf("could not execute root cmd: %w", err))
+
+		log.Fatalf("could not execute root command: %v", err)
 	}
 }
