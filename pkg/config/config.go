@@ -11,34 +11,15 @@ const (
 	azureStorageApiKeyKey        = "AZURE_STORAGE_API_KEY"
 	azureStorageAccountUrlKey    = "AZURE_STORAGE_ACCOUNT_URL"
 	azureStorageContainerNameKey = "AZURE_STORAGE_CONTAINER_NAME"
+	objectStorageEndpointKey     = "OBJECT_STORAGE_ENDPOINT"
+	objectStorageAccessKeyKey    = "OBJECT_STORAGE_ACCESS_KEY"
+	objectStorageSecretKeyKey    = "OBJECT_STORAGE_SECRET_KEY"
+	objectStorageBucketNameKey   = "OBJECT_STORAGE_BUCKET_NAME"
+	objectStorageUseSSLKey       = "OBJECT_STORAGE_USE_SSL"
+	storageBackendKey            = "STORAGE_BACKEND"
 	githubTokenKey               = "CLI_GITHUB_TOKEN"
 	sentryDsnKey                 = "SENTRY_DSN"
 )
-
-type AzureStorageConfig struct {
-	AccountName   string
-	ApiKey        string
-	AccountUrl    string
-	ContainerName string
-}
-
-func NewAzureStorageConfig() (AzureStorageConfig, error) {
-	accountName := viper.GetString(azureStorageAccountNameKey)
-	apiKey := viper.GetString(azureStorageApiKeyKey)
-	accountUrl := viper.GetString(azureStorageAccountUrlKey)
-	containerName := viper.GetString(azureStorageContainerNameKey)
-
-	if accountName == "" || apiKey == "" || accountUrl == "" || containerName == "" {
-		return AzureStorageConfig{}, fmt.Errorf("azure Storage configuration is incomplete")
-	}
-
-	return AzureStorageConfig{
-		AccountName:   accountName,
-		ApiKey:        apiKey,
-		AccountUrl:    accountUrl,
-		ContainerName: containerName,
-	}, nil
-}
 
 type SentryConfig struct {
 	Dsn string
@@ -51,10 +32,12 @@ func NewSentryConfig() SentryConfig {
 }
 
 type Config struct {
-	AzureStorageConfig AzureStorageConfig
-	SentryConfig       SentryConfig
-	GitHubToken        string
-	Organization       string
+	AzureStorageConfig  AzureStorageConfig
+	ObjectStorageConfig ObjectStorageConfig
+	SentryConfig        SentryConfig
+	GitHubToken         string
+	Organization        string
+	StorageBackend      string
 }
 
 func New(filepath string) (*Config, error) {
@@ -76,15 +59,22 @@ func New(filepath string) (*Config, error) {
 		return nil, fmt.Errorf("github token is not set in the configuration file")
 	}
 
-	azureStorageConfig, err := NewAzureStorageConfig()
+	storageBackend := viper.GetString(storageBackendKey)
+	if storageBackend == "" {
+		storageBackend = StorageBackendAzure // Defaults to Azure blob storage
+	}
+
+	azureStorageConfig, objectStorageConfig, err := createStorageConfigs(storageBackend)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Config{
-		AzureStorageConfig: azureStorageConfig,
-		GitHubToken:        token,
-		SentryConfig:       NewSentryConfig(),
+		AzureStorageConfig:  azureStorageConfig,
+		ObjectStorageConfig: objectStorageConfig,
+		GitHubToken:         token,
+		SentryConfig:        NewSentryConfig(),
+		StorageBackend:      storageBackend,
 	}, nil
 }
 

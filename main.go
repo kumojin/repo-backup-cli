@@ -17,8 +17,6 @@ func initSentry(cfg config.SentryConfig) (func(), error) {
 		EnableLogs:       true,
 		SendDefaultPII:   true,
 		AttachStacktrace: true,
-		EnableTracing:    true,
-		TracesSampleRate: 1.0,
 	})
 	if err != nil {
 		return nil, err

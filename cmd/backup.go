@@ -8,7 +8,6 @@ import (
 	"github.com/kumojin/repo-backup-cli/pkg/config"
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/kumojin/repo-backup-cli/pkg/logging"
-	"github.com/kumojin/repo-backup-cli/pkg/storage/azure"
 	"github.com/kumojin/repo-backup-cli/pkg/uc"
 
 	"github.com/spf13/cobra"
@@ -87,12 +86,11 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) {
 
 	logger = logger.With(slog.String("organization", cfg.Organization))
 
-	azClient, err := appContext.GetAzureBlobClient(cfg)
+	blobRepository, err := appContext.NewBlobRepository(cfg)
 	if err != nil {
-		logger.Error("could not get azure blob client", slog.Any("error", err))
+		logger.Error("could not get blob repository", slog.Any("error", err))
 		return
 	}
-	blobRepository := azure.NewBlobRepository(cfg, azClient)
 
 	createBackupUseCase := getCreateBackupUseCase(cfg)
 
