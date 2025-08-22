@@ -28,7 +28,7 @@ jobs:
         run: go mod verify
 
       - name: Install just
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@v3
 
       - name: Run tests with coverage
         run: just test-coverage
