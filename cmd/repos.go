@@ -26,7 +26,7 @@ func runReposCommand(cmd *cobra.Command, args []string) {
 	ctx := context.Background()
 	logger := logging.NewLogger(ctx)
 
-	cfg, err := GetConfig()
+	cfg, err := getConfig()
 	if err != nil {
 		logger.Error("could not get config", slog.Any("error", err))
 		return

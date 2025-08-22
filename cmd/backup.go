@@ -51,7 +51,7 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) {
 		slog.String("backupType", "local"),
 	)
 
-	cfg, err := GetConfig()
+	cfg, err := getConfig()
 	if err != nil {
 		logger.Error("could not get config", slog.Any("error", err))
 		return
@@ -78,7 +78,7 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) {
 		slog.String("backupType", "remote"),
 	)
 
-	cfg, err := GetConfig()
+	cfg, err := getConfig()
 	if err != nil {
 		logger.Error("could not get config", slog.Any("error", err))
 		return

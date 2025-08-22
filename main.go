@@ -1,53 +1,20 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/kumojin/repo-backup-cli/cmd"
-	"github.com/kumojin/repo-backup-cli/pkg/config"
-	"github.com/spf13/pflag"
 )
 
-func initSentry(cfg config.SentryConfig) (func(), error) {
-	err := sentry.Init(sentry.ClientOptions{
-		Dsn:              cfg.Dsn,
-		EnableLogs:       true,
-		SendDefaultPII:   true,
-		AttachStacktrace: true,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return func() {
-		sentry.Flush(2 * time.Second)
-	}, nil
-}
-
 func main() {
-	rootCmd := cmd.RootCommand()
+	defer sentry.Flush(2 * time.Second)
 
-	err := rootCmd.ParseFlags(os.Args[1:])
-	if err != nil && !errors.Is(err, pflag.ErrHelp) {
-		log.Fatalf("could not parse flags: %v", err)
-	}
-
-	cfg, err := cmd.GetConfig()
+	rootCmd, err := cmd.RootCommand()
 	if err != nil {
-		log.Fatalf("could not get config: %v", err)
-	}
-
-	if cfg.IsSentryEnabled() {
-		flush, err := initSentry(cfg.GetSentryConfig())
-		if err != nil {
-			log.Fatalf("could not init sentry: %v", err)
-		}
-		defer flush()
+		log.Fatalf("could not create root command: %v", err)
 	}
 
 	if err := rootCmd.Execute(); err != nil {
