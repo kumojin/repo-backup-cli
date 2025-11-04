@@ -7,6 +7,7 @@ require (
 	github.com/getsentry/sentry-go v0.35.1
 	github.com/getsentry/sentry-go/slog v0.35.1
 	github.com/google/go-github/v74 v74.0.0
+	github.com/google/go-github/v77 v77.0.0
 	github.com/minio/minio-go/v7 v7.0.95
 	github.com/samber/slog-multi v1.4.1
 	github.com/spf13/cobra v1.9.1
