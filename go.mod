@@ -1,6 +1,6 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.25.0
+go 1.25.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.2
