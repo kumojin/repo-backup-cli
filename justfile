@@ -31,7 +31,11 @@ clean-mocks:
 
 # Build the CLI
 build:
-    go build -o rbk .
+    ./scripts/build.sh
+
+# Build the CLI
+run:
+    ./scripts/run.sh
 
 # Run local backup
 backup-local: build
