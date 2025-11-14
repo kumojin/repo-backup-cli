@@ -27,7 +27,6 @@ func main() {
 		fang.WithCommit(version.Commit),
 	}
 
-	fmt.Println(version.Tag, version.Commit)
 
 	if err := fang.Execute(context.Background(), rootCmd, opts...); err != nil {
 		sentry.Flush(flushTimeout)

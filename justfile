@@ -33,7 +33,7 @@ clean-mocks:
 build:
     ./scripts/build.sh
 
-# Build the CLI
+# Run the CLI in development mode
 run:
     ./scripts/run.sh
 
