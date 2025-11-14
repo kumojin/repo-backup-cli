@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -26,7 +25,6 @@ func main() {
 		fang.WithVersion(version.Tag),
 		fang.WithCommit(version.Commit),
 	}
-
 
 	if err := fang.Execute(context.Background(), rootCmd, opts...); err != nil {
 		sentry.Flush(flushTimeout)
