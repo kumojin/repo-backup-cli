@@ -7,7 +7,7 @@ require (
 	github.com/charmbracelet/fang v0.4.4
 	github.com/getsentry/sentry-go v0.37.0
 	github.com/getsentry/sentry-go/slog v0.37.0
-	github.com/google/go-github/v78 v78.0.0
+	github.com/google/go-github/v79 v79.0.0
 	github.com/google/go-github/v79 v79.0.0
 	github.com/minio/minio-go/v7 v7.0.97
 	github.com/samber/slog-multi v1.5.0
