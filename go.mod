@@ -4,9 +4,11 @@ go 1.25.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.3
+	github.com/charmbracelet/fang v0.4.4
 	github.com/getsentry/sentry-go v0.37.0
 	github.com/getsentry/sentry-go/slog v0.37.0
 	github.com/google/go-github/v78 v78.0.0
+	github.com/google/go-github/v79 v79.0.0
 	github.com/minio/minio-go/v7 v7.0.97
 	github.com/samber/slog-multi v1.5.0
 	github.com/spf13/cobra v1.10.1
@@ -19,7 +21,6 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.19.1 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.2 // indirect
 	github.com/charmbracelet/colorprofile v0.3.3 // indirect
-	github.com/charmbracelet/fang v0.4.4 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20251113170443-6579eb89a65c // indirect
 	github.com/charmbracelet/x/ansi v0.11.1-0.20251110210702-903592506081 // indirect
 	github.com/charmbracelet/x/exp/charmtone v0.0.0-20251113172435-cef867b85f6a // indirect
