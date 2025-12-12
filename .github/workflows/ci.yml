@@ -34,7 +34,7 @@ jobs:
         run: just test-coverage
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-report
           path: coverage/coverage_filtered.out
@@ -61,7 +61,7 @@ jobs:
         run: ./rbk --help
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: rbk-binary
           path: rbk
