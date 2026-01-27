@@ -6,7 +6,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.4
 	github.com/charmbracelet/fang v0.4.4
 	github.com/getsentry/sentry-go v0.42.0
-	github.com/getsentry/sentry-go/slog v0.41.0
+	github.com/getsentry/sentry-go/slog v0.42.0
 	github.com/google/go-github/v80 v80.0.0
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/samber/slog-multi v1.7.0
