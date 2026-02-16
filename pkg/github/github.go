@@ -3,7 +3,7 @@ package github
 import (
 	"context"
 
-	gh "github.com/google/go-github/v80/github"
+	gh "github.com/google/go-github/v82/github"
 )
 
 const maxPerPage = 100
