@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	gh "github.com/google/go-github/v80/github"
+	gh "github.com/google/go-github/v82/github"
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
