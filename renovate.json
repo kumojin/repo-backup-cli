@@ -4,7 +4,8 @@
     "github>kumojin/renovate-config"
   ],
   "postUpdateOptions": [
-    "gomodTidy"
+    "gomodTidy",
+    "gomodUpdateImportPaths"
   ],
   "automerge": true
 }
