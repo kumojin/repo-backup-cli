@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.4
-	github.com/charmbracelet/fang v0.4.4
+	github.com/charmbracelet/fang/v2 v2.0.1
 	github.com/getsentry/sentry-go v0.45.1
 	github.com/getsentry/sentry-go/slog v0.45.1
 	github.com/google/go-github/v84 v84.0.0
