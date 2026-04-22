@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/charmbracelet/fang"
+	"charm.land/fang/v2"
 	"github.com/getsentry/sentry-go"
 	"github.com/kumojin/repo-backup-cli/cmd"
 	"github.com/kumojin/repo-backup-cli/internal/version"
