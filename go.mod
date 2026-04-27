@@ -5,8 +5,8 @@ go 1.25.4
 require (
 	charm.land/fang/v2 v2.0.1
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.4
-	github.com/getsentry/sentry-go v0.45.1
-	github.com/getsentry/sentry-go/slog v0.45.1
+	github.com/getsentry/sentry-go v0.46.0
+	github.com/getsentry/sentry-go/slog v0.46.0
 	github.com/google/go-github/v84 v84.0.0
 	github.com/minio/minio-go/v7 v7.0.100
 	github.com/samber/slog-multi v1.8.0
