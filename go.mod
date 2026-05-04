@@ -5,10 +5,10 @@ go 1.25.4
 require (
 	charm.land/fang/v2 v2.0.1
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.4
-	github.com/getsentry/sentry-go v0.46.0
-	github.com/getsentry/sentry-go/slog v0.46.0
+	github.com/getsentry/sentry-go v0.46.1
+	github.com/getsentry/sentry-go/slog v0.46.1
 	github.com/google/go-github/v85 v85.0.0
-	github.com/minio/minio-go/v7 v7.0.100
+	github.com/minio/minio-go/v7 v7.1.0
 	github.com/samber/slog-multi v1.8.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
@@ -19,6 +19,7 @@ require (
 	charm.land/lipgloss/v2 v2.0.1 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.21.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.2 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/charmbracelet/colorprofile v0.4.2 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260216110529-99b1399b988f // indirect
 	github.com/charmbracelet/x/ansi v0.11.6 // indirect
@@ -63,6 +64,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tinylib/msgp v1.6.3 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
