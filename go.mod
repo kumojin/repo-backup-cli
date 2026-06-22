@@ -7,7 +7,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.7.0
 	github.com/getsentry/sentry-go v0.46.2
 	github.com/getsentry/sentry-go/slog v0.46.2
-	github.com/google/go-github/v86 v86.0.0
+	github.com/google/go-github/v88 v88.0.0
 	github.com/minio/minio-go/v7 v7.2.0
 	github.com/samber/slog-multi v1.8.0
 	github.com/spf13/cobra v1.10.2
