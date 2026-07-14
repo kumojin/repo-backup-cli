@@ -3,7 +3,7 @@ package uc
 import (
 	"context"
 
-	gh "github.com/google/go-github/v86/github"
+	gh "github.com/google/go-github/v89/github"
 	"github.com/kumojin/repo-backup-cli/pkg/github"
 )
 

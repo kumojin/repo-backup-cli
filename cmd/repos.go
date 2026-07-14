@@ -36,7 +36,12 @@ func runReposCommand(cmd *cobra.Command, args []string) error {
 		slog.String("organization", cfg.Organization),
 	)
 
-	githubClient := github.NewClient(appContext.GetGithubClient(cfg))
+	ghClient, err := appContext.GetGithubClient(cfg)
+	if err != nil {
+		logger.Error("could not get github client", slog.Any("error", err))
+		return err
+	}
+	githubClient := github.NewClient(ghClient)
 
 	usecase := uc.NewListPrivateReposUseCase(githubClient)
 
