@@ -47,7 +47,6 @@ func preRun(_ *cobra.Command, _ []string) error {
 
 	return sentry.Init(sentry.ClientOptions{
 		Dsn:              cfg.GetSentryConfig().Dsn,
-		EnableLogs:       true,
 		SendDefaultPII:   true,
 		AttachStacktrace: true,
 	})
