@@ -59,7 +59,11 @@ func runLocalBackupCommand(_ *cobra.Command, _ []string) error {
 
 	logger = logger.With(slog.String("organization", cfg.Organization))
 
-	createBackupUseCase := getCreateBackupUseCase(cfg)
+	createBackupUseCase, err := getCreateBackupUseCase(cfg)
+	if err != nil {
+		logger.Error("could not create backup use case", slog.Any("error", err))
+		return err
+	}
 
 	usecase := uc.NewCreateLocalBackupUseCase(createBackupUseCase)
 
@@ -94,7 +98,11 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 		return err
 	}
 
-	createBackupUseCase := getCreateBackupUseCase(cfg)
+	createBackupUseCase, err := getCreateBackupUseCase(cfg)
+	if err != nil {
+		logger.Error("could not create backup use case", slog.Any("error", err))
+		return err
+	}
 
 	usecase := uc.NewCreateRemoteBackupUseCase(blobRepository, createBackupUseCase)
 
@@ -111,12 +119,16 @@ func runRemoteBackupCommand(_ *cobra.Command, _ []string) error {
 	return nil
 }
 
-func getCreateBackupUseCase(cfg *config.Config) uc.CreateBackupUseCase {
-	githubClient := github.NewClient(appContext.GetGithubClient(cfg))
+func getCreateBackupUseCase(cfg *config.Config) (uc.CreateBackupUseCase, error) {
+	ghClient, err := appContext.GetGithubClient(cfg)
+	if err != nil {
+		return nil, err
+	}
+	githubClient := github.NewClient(ghClient)
 
 	return uc.NewCreateBackupUseCase(
 		githubClient,
 		uc.NewListPrivateReposUseCase(githubClient),
 		uc.NewGetOrganizationArchiveUrlUseCase(githubClient),
-	)
+	), nil
 }

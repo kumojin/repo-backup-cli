@@ -9,10 +9,14 @@ var (
 	githubClient *github.Client
 )
 
-func GetGithubClient(cfg *config.Config) *github.Client {
+func GetGithubClient(cfg *config.Config) (*github.Client, error) {
 	if githubClient == nil {
-		githubClient = github.NewClient(nil).WithAuthToken(cfg.GitHubToken)
+		client, err := github.NewClient(github.WithAuthToken(cfg.GitHubToken))
+		if err != nil {
+			return nil, err
+		}
+		githubClient = client
 	}
 
-	return githubClient
+	return githubClient, nil
 }
