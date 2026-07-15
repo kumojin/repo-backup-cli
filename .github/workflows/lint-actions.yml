@@ -1,0 +1,84 @@
+name: Lint GitHub Actions
+
+on:
+  pull_request:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changes:
+    name: Detect workflow changes
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: read
+    outputs:
+      github: ${{ steps.filter.outputs.github }}
+    steps:
+      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+        id: filter
+        with:
+          filters: |
+            github:
+              - '.github/**'
+
+  lint:
+    name: Lint
+    needs: changes
+    if: needs.changes.outputs.github == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
+        with:
+          version: "1.26.1" # pin the zizmor CLI; bump deliberately
+          advanced-security: false
+          annotations: true
+
+      - name: Run actionlint
+        env:
+          ACTIONLINT_VERSION: 1.7.12
+        run: |
+          curl -fsSL -o actionlint-matcher.json "https://raw.githubusercontent.com/rhysd/actionlint/v${ACTIONLINT_VERSION}/.github/actionlint-matcher.json"
+          echo "::add-matcher::actionlint-matcher.json"
+          bash <(curl -fsSL "https://raw.githubusercontent.com/rhysd/actionlint/v${ACTIONLINT_VERSION}/scripts/download-actionlint.bash") "${ACTIONLINT_VERSION}"
+          ./actionlint -color
+        shell: bash
+
+      - name: Verify actions are pinned
+        uses: suzuki-shunsuke/pinact-action@896d595f299e71d65b9d28349d6956abe144390a # v3.0.0
+        with:
+          fix: "false"
+
+  gate:
+    name: Lint gate
+    if: always()
+    needs: [changes, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check lint outcome
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          LINT_RESULT: ${{ needs.lint.result }}
+        run: |
+          # 'skipped' lint means .github/** was untouched — that is a pass.
+          # Fail closed if change-detection itself broke, or lint failed/was cancelled.
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "Change detection did not succeed (result: $CHANGES_RESULT)"
+            exit 1
+          fi
+          if [ "$LINT_RESULT" = "failure" ] || [ "$LINT_RESULT" = "cancelled" ]; then
+            echo "Lint failed (result: $LINT_RESULT)"
+            exit 1
+          fi
+          echo "OK (changes: $CHANGES_RESULT, lint: $LINT_RESULT)"

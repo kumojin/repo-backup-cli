@@ -7,5 +7,20 @@
     "gomodTidy",
     "gomodUpdateImportPaths"
   ],
-  "automerge": true
+  "automerge": true,
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "zizmorcore/zizmor-action",
+        "ghcr.io/zizmorcore/zizmor"
+      ],
+      "groupName": "zizmor",
+      "description": "zizmor-action bundles a pinned per-version digest in support/versions; bump the action tag and the zizmor binary (with.version) together so with.version never runs ahead of a version the pinned action supports"
+    },
+    {
+      "matchPackageNames": ["ghcr.io/zizmorcore/zizmor"],
+      "pinDigests": false,
+      "description": "zizmor-action's `version` input accepts only `latest` or an exact X.Y.Z (no digest); config:best-practices would otherwise pin a digest and break the action, which already resolves the digest internally from its bundled support/versions"
+    }
+  ]
 }
