@@ -21,6 +21,14 @@
       "matchPackageNames": ["ghcr.io/zizmorcore/zizmor"],
       "pinDigests": false,
       "description": "zizmor-action's `version` input accepts only `latest` or an exact X.Y.Z (no digest); config:best-practices would otherwise pin a digest and break the action, which already resolves the digest internally from its bundled support/versions"
+    },
+    {
+      "matchPackageNames": [
+        "golangci/golangci-lint-action",
+        "golangci/golangci-lint"
+      ],
+      "groupName": "golangci-lint",
+      "description": "Keep the golangci-lint-action SHA pin and the golangci-lint version input (with.version) bumped together in their own PR, since a lint tool bump can change what's enforced in CI"
     }
   ]
 }
