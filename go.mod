@@ -1,6 +1,6 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.25.4
+go 1.25.13
 
 require (
 	charm.land/fang/v2 v2.0.1
