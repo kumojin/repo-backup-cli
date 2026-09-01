@@ -223,6 +223,8 @@ VS Code launch configurations are provided in the `.vscode/launch.json` file for
 
 ### Using the Justfile
 
+TEST
+
 This project includes a `justfile` with common development tasks. Use the following command to list them all:
 
 ```bash
