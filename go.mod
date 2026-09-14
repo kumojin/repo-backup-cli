@@ -1,10 +1,10 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.25.4
+go 1.27.1
 
 require (
 	charm.land/fang/v2 v2.0.1
-	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.0
+	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.1
 	github.com/getsentry/sentry-go v0.49.0
 	github.com/getsentry/sentry-go/slog v0.49.0
 	github.com/google/go-github/v90 v90.0.0
@@ -17,8 +17,9 @@ require (
 
 require (
 	charm.land/lipgloss/v2 v2.0.3 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.1 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
+	github.com/apache/arrow-go/v18 v18.7.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
 	github.com/charmbracelet/ultraviolet v0.0.0-20260216110529-99b1399b988f // indirect
@@ -32,6 +33,8 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+	github.com/goccy/go-json v0.10.6 // indirect
+	github.com/google/flatbuffers v25.12.19+incompatible // indirect
 	github.com/google/go-querystring v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -49,6 +52,7 @@ require (
 	github.com/muesli/roff v0.1.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.28 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
@@ -64,6 +68,7 @@ require (
 	github.com/zeebo/xxh3 v1.1.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
+	golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297 // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
