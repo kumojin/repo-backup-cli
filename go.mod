@@ -1,12 +1,12 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.27.1
+go 1.27.2
 
 require (
 	charm.land/fang/v2 v2.0.1
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.2
-	github.com/getsentry/sentry-go v0.49.0
-	github.com/getsentry/sentry-go/slog v0.49.0
+	github.com/getsentry/sentry-go v0.50.0
+	github.com/getsentry/sentry-go/slog v0.50.0
 	github.com/google/go-github/v90 v90.0.0
 	github.com/minio/minio-go/v7 v7.3.0
 	github.com/samber/slog-multi v1.8.0
