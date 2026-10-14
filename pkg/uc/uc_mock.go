@@ -8,7 +8,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/go-github/v90/github"
+	"github.com/google/go-github/v92/github"
 	mock "github.com/stretchr/testify/mock"
 )
 
