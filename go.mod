@@ -1,6 +1,6 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.27.2
+go 1.27.3
 
 require (
 	charm.land/fang/v2 v2.0.1
@@ -9,7 +9,7 @@ require (
 	github.com/getsentry/sentry-go/slog v0.50.0
 	github.com/google/go-github/v90 v90.0.0
 	github.com/minio/minio-go/v7 v7.4.1
-	github.com/samber/slog-multi v1.8.0
+	github.com/samber/slog-multi v1.9.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.12.1
@@ -58,7 +58,7 @@ require (
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/samber/lo v1.53.0 // indirect
-	github.com/samber/slog-common v0.21.0 // indirect
+	github.com/samber/slog-common v0.22.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
