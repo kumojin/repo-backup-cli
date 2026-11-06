@@ -1,15 +1,15 @@
 module github.com/kumojin/repo-backup-cli
 
-go 1.27.2
+go 1.27.3
 
 require (
 	charm.land/fang/v2 v2.0.1
-	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.2
+	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.3
 	github.com/getsentry/sentry-go v0.50.0
 	github.com/getsentry/sentry-go/slog v0.50.0
 	github.com/google/go-github/v90 v90.0.0
 	github.com/minio/minio-go/v7 v7.4.1
-	github.com/samber/slog-multi v1.8.0
+	github.com/samber/slog-multi v1.9.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.12.1
@@ -17,8 +17,8 @@ require (
 
 require (
 	charm.land/lipgloss/v2 v2.0.6 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.2 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.12.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/storage/internal v0.1.0 // indirect
 	github.com/apache/arrow-go/v18 v18.7.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -58,7 +58,7 @@ require (
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/samber/lo v1.53.0 // indirect
-	github.com/samber/slog-common v0.21.0 // indirect
+	github.com/samber/slog-common v0.22.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
