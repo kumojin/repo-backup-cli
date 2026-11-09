@@ -64,7 +64,7 @@ The above command will create a `.env` file in the root directory from the `.env
 
 ### Prerequisites
 
-- [Go 1.25+](https://golang.org/doc/install) - The project requires Go version 1.25 or later
+- [Go 1.27.3+](https://golang.org/doc/install) - The project requires Go version 1.27.3 or later
 - [Just](https://github.com/casey/just) - **(Optional)** Command runner for development tasks (installable via `brew install just`)
 
 ### Clone the Repository
