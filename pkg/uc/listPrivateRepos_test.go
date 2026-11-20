@@ -20,19 +20,19 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 		Return(
 			[]*gh.Repository{
 				{
-					Name:     gh.Ptr("repo1"),
-					Archived: gh.Ptr(false),
-					Private:  gh.Ptr(true),
+					Name:     new("repo1"),
+					Archived: new(false),
+					Private:  new(true),
 				},
 				{
-					Name:     gh.Ptr("repo2"),
-					Archived: gh.Ptr(true), // Archived repo, should be filtered out
-					Private:  gh.Ptr(true),
+					Name:     new("repo2"),
+					Archived: new(true), // Archived repo, should be filtered out
+					Private:  new(true),
 				},
 				{
-					Name:     gh.Ptr("repo3"),
-					Archived: gh.Ptr(false),
-					Private:  gh.Ptr(true),
+					Name:     new("repo3"),
+					Archived: new(false),
+					Private:  new(true),
 				},
 			},
 			nil,
@@ -48,14 +48,14 @@ func TestListPrivateReposUseCase_SuccessfullyListNonArchivedRepos(t *testing.T) 
 
 	expectedRepos := []gh.Repository{
 		{
-			Name:     gh.Ptr("repo1"),
-			Archived: gh.Ptr(false),
-			Private:  gh.Ptr(true),
+			Name:     new("repo1"),
+			Archived: new(false),
+			Private:  new(true),
 		},
 		{
-			Name:     gh.Ptr("repo3"),
-			Archived: gh.Ptr(false),
-			Private:  gh.Ptr(true),
+			Name:     new("repo3"),
+			Archived: new(false),
+			Private:  new(true),
 		},
 	}
 	assert.Equal(t, expectedRepos, repos)

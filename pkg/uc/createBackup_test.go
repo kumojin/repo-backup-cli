@@ -69,13 +69,13 @@ func TestCreateBackupUseCase_Success(t *testing.T) {
 	mocks := newCreateBackupTestMocks(t)
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 	archiveContent := "mock archive content"
 	savePath := "/tmp/backup.zip"
@@ -117,17 +117,17 @@ func TestCreateBackupUseCase_SuccessOnSecondCall(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	pendingMigration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("pending"),
+		ID:    new(int64(12345)),
+		State: new("pending"),
 	}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 	archiveContent := "mock archive content"
 	savePath := "/tmp/backup.zip"
@@ -194,8 +194,8 @@ func TestCreateBackupUseCase_StartMigrationError(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	expectedError := errors.New("failed to start migration")
@@ -222,17 +222,17 @@ func TestCreateBackupUseCase_FailedMigration(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("pending"),
+		ID:    new(int64(12345)),
+		State: new("pending"),
 	}
 	failedMigration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("failed"),
+		ID:    new(int64(12345)),
+		State: new("failed"),
 	}
 
 	mocks.listPrivateRepos.EXPECT().Do(mock.Anything, organization).Return(repos, nil)
@@ -261,13 +261,13 @@ func TestCreateBackupUseCase_GetMigrationStatusError(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("pending"),
+		ID:    new(int64(12345)),
+		State: new("pending"),
 	}
 	expectedError := errors.New("failed to get migration status")
 
@@ -297,13 +297,13 @@ func TestCreateBackupUseCase_GetArchiveURLError(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 	expectedError := errors.New("failed to get archive URL")
 
@@ -337,13 +337,13 @@ func TestCreateBackupUseCase_SaveBackupError(t *testing.T) {
 	// Setup test data
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 	archiveContent := "mock archive content"
 	expectedError := errors.New("failed to save backup")
@@ -385,13 +385,13 @@ func TestCreateBackupUseCase_HTTPStatusNotOK(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -429,13 +429,13 @@ func TestCreateBackupUseCase_HTTPGetError(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("exported"),
+		ID:    new(int64(12345)),
+		State: new("exported"),
 	}
 	// Use an invalid URL scheme to force an HTTP error
 	invalidURL := "invalid://not-a-valid-url"
@@ -469,13 +469,13 @@ func TestCreateBackupUseCase_ContextCancellation(t *testing.T) {
 
 	organization := "kumojin"
 	repos := []gh.Repository{
-		{Name: gh.Ptr("repo1")},
-		{Name: gh.Ptr("repo2")},
+		{Name: new("repo1")},
+		{Name: new("repo2")},
 	}
 	repoNames := []string{"repo1", "repo2"}
 	migration := &gh.Migration{
-		ID:    gh.Ptr(int64(12345)),
-		State: gh.Ptr("pending"),
+		ID:    new(int64(12345)),
+		State: new("pending"),
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
