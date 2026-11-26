@@ -23,9 +23,11 @@ Azure Blob Storage is Microsoft's object storage solution for the cloud. To use 
 - Set `STORAGE_BACKEND=azure` in your configuration
 - Configure the following environment variables:
   - `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
-  - `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
+  - `AZURE_STORAGE_API_KEY` - **(Optional)** Your Azure Storage account key
   - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
   - `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
+
+When `AZURE_STORAGE_API_KEY` is empty, the CLI authenticates with Microsoft Entra ID through [`DefaultAzureCredential`](https://learn.microsoft.com/azure/developer/go/sdk/authentication/credential-chains#defaultazurecredential-overview): a managed identity when running in Azure, or your `az login` session locally. The identity needs the `Storage Blob Data Contributor` role on the container.
 
 ### S3-Compatible Object Storage
 
@@ -150,7 +152,7 @@ The CLI uses an env file (`.env` by default) as its config:
 **For Azure Blob Storage (`STORAGE_BACKEND=azure`):**
 
 - `AZURE_STORAGE_ACCOUNT_NAME` - Your Azure Storage account name
-- `AZURE_STORAGE_API_KEY` - Your Azure Storage API key
+- `AZURE_STORAGE_API_KEY` - **(Optional)** Your Azure Storage account key. Leave empty to authenticate with Microsoft Entra ID
 - `AZURE_STORAGE_ACCOUNT_URL` - Your Azure Storage account URL
 - `AZURE_STORAGE_CONTAINER_NAME` - Your Azure Storage container name
 

@@ -24,7 +24,7 @@ func newAzureStorageConfig() (AzureStorageConfig, error) {
 	accountUrl := viper.GetString(azureStorageAccountUrlKey)
 	containerName := viper.GetString(azureStorageContainerNameKey)
 
-	if accountName == "" || apiKey == "" || accountUrl == "" || containerName == "" {
+	if accountName == "" || accountUrl == "" || containerName == "" {
 		return AzureStorageConfig{}, fmt.Errorf("azure Storage configuration is incomplete")
 	}
 
@@ -34,6 +34,10 @@ func newAzureStorageConfig() (AzureStorageConfig, error) {
 		AccountUrl:    accountUrl,
 		ContainerName: containerName,
 	}, nil
+}
+
+func (c AzureStorageConfig) UsesSharedKey() bool {
+	return c.ApiKey != ""
 }
 
 type ObjectStorageConfig struct {
